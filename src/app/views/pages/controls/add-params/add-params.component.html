@@ -1,0 +1,276 @@
+<div class="main-content">
+  <div class="row header">
+    <div class="col-4">
+      <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink=".">Controles</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Parametrizar</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="p-top habladores">Parametriza tus controles según la metodología de tu organización.</div>
+
+  <div class="row">
+    <div class="card">
+      <div class="card-body">
+          <mat-tab-group animationDuration="0ms">
+            <mat-tab label="Asignación de pesos">
+
+              <div class="row">
+                <div class="col-6 p-top habladores">
+                  Pesos de ambas variables
+                </div>
+
+                <div class="col-6">
+                  <div class="btn-flex-end">
+                    <button mat-raised-button class="button-add-color" (click)="openEditWeight()">
+                      <div class="btn-content">
+                        <div class="button-txt">
+                          Editar parametrización
+                        </div>
+                        <div class="icon">
+                          <mat-icon>create</mat-icon>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row padding-top-slider">
+                <div class="col-4 value-slider">
+                    <label for="Desing">{{ valueDesign }}%</label>
+                </div>
+                <div class="col-4 text-aling-center">                  
+                  <mat-slider min="0" max="100" step="10" showTickMarks discrete [value]="valueDesign">
+                    <input matSliderThumb>
+                  </mat-slider>
+                </div>
+                <div class="col-4 value-slider">
+                  <label for="Ejecution">{{ valueExecution}}%</label>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-4 text-aling-center">
+                    <label for="Desing">Diseño</label>
+                </div>
+                <div class="col-4"></div>
+                <div class="col-4 text-aling-center">
+                  <label for="Ejecution">Ejecución</label>
+                </div>
+              </div>
+
+              <div class="row text-aling-center padding-top-input">
+                <div class="col-12 habladores">
+                  Para editar el peso haz clic en editar parametrización
+                </div>
+              </div>
+
+              <div class="row padding-top-input">
+                <div class="col-12 habladores">
+                  Que es diseño, ejecución y solidez?
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <span class="habladores">Diseño:</span> <span class="font-size-14"> Es el conjunto de criterios que conforman el control.</span>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <span class="habladores">Ejecución:</span> <span class="font-size-14"> Son las variables que lo califican para determinar su correcta ejecución.</span>
+                </div>
+              </div>
+
+               <div class="row">
+                <div class="col-12">
+                  <span class="habladores">Solidez:</span> <span class="font-size-14"> Son los rangos de calificación de la combinación entre diseño y ejecución.</span>
+                </div>
+              </div>
+
+            </mat-tab>
+
+            <mat-tab label="Variables de diseño">
+              <div class="row">
+                <div class="col-8 p-top">
+                  <span>Pesos de las variables 100%</span>
+                </div>
+
+                <div class="col-4 habladores">
+                  <!-- <div class="btn-flex-end">
+                    <button mat-raised-button class="button-add-color" (click)="openCreatedVar()">
+                      <div class="btn-content">
+                        <div class="button-txt">
+                          Crear Variables
+                        </div>
+                        <div class="icon">
+                          <mat-icon>create</mat-icon>
+                        </div>
+                      </div>
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <span class="font-size-14">Los usuarios operativos podrán ver estas variables en la calificación de los controles</span>
+                </div>
+               </div>
+
+               <div class="mat-elevation-z8 p-top">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="dataSource">
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="weight">
+                      <th mat-header-cell *matHeaderCellDef>Peso</th>
+                      <td mat-cell *matCellDef="let row"> {{row.parama}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                      <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button class="edit-color" matTooltip="Editar"     
+                        (click)="onEditVariables(row)">
+                            <mat-icon class="font-weight-boldest">create</mat-icon>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                    > 
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Variables de ejecución">
+              <div class="row">
+                <div class="col-8 p-top">
+                  <span>Pesos de las variables 100%</span>
+                </div>
+
+                <div class="col-4 habladores">
+                  <!-- <div class="btn-flex-end">
+                    <button mat-raised-button class="button-add-color" (click)="openCreatedVar()">
+                      <div class="btn-content">
+                        <div class="button-txt">
+                          Crear Variables
+                        </div>
+                        <div class="icon">
+                          <mat-icon>create</mat-icon>
+                        </div>
+                      </div>
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <span class="font-size-14">Los usuarios operativos podrán ver estas variables en la calificación de los controles</span>
+                </div>
+               </div>
+
+               <div class="mat-elevation-z8 p-top">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="dataSourceEjecution" matSort>
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="weight">
+                      <th mat-header-cell *matHeaderCellDef>Peso</th>
+                      <td mat-cell *matCellDef="let row"> {{row.parama}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                      <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button class="edit-color" matTooltip="Editar"     
+                        (click)="onEditVariables(row)">
+                            <mat-icon class="font-weight-boldest">create</mat-icon>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                    > 
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </mat-tab>
+            <mat-tab label="Solidez">
+              <div class="row">
+                <div class="col-12 p-top habladores">
+                  <span>Rangos de solidez de control</span>
+                </div>
+              </div>
+
+               <div class="mat-elevation-z8 p-top">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="dataSourceSolidity">
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="from">
+                      <th mat-header-cell *matHeaderCellDef>Desde</th>
+                      <td mat-cell *matCellDef="let row"> {{row.parama}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="until">
+                      <th mat-header-cell *matHeaderCellDef>Hasta</th>
+                      <td mat-cell *matCellDef="let row"> {{row.paramb}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="color">
+                      <th mat-header-cell *matHeaderCellDef>Color</th>
+                      <td mat-cell *matCellDef="let row">
+                          <span [ngStyle]="{'background-color': row.paramc, 'display': 'inline-block', 'width': '100%', 'height': '20px'}"></span>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                      <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button class="edit-color" matTooltip="Editar"     
+                        (click)="onEditSolidity(row)">
+                            <mat-icon class="font-weight-boldest">create</mat-icon>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsSolidity"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsSolidity" 
+                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                    > 
+                    </tr>
+                  </table>
+                </div> 
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+      </div>
+    </div>
+ </div>

@@ -1,0 +1,46 @@
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(5, 80px);
+  grid-template-rows: 40px repeat(5, 80px) 40px;
+  gap: 4px;
+}
+
+.axis-corner {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.axis-label-horizontal,
+.axis-label-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 200;
+  text-align: center;
+  padding: 4px;
+}
+
+.heatmap-cell {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.padding-top-color {
+  padding-top: 28px;
+}
+
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  margin: 2px;
+  font-weight: bold;
+  cursor: pointer;
+}

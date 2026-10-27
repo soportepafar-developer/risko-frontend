@@ -1,0 +1,585 @@
+<div class="main-content">
+  <nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink=".">Riesgo</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Crear</li>
+    </ol>
+  </nav>
+ 
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Información General">
+            <div class="row">
+              <div class="col-8">
+                <div class="padding-top-input habladores">Escribe la información general de este riesgo.</div>
+
+                <div class="row padding-top-input">
+                  <div class="col-12">
+                      <mat-form-field>
+                          <mat-label>Nombre</mat-label>
+                          <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" >
+                          <mat-error *ngIf="submitted && f.name.errors">
+                              <mat-error *ngIf="f.name.errors.required">Ingrese nombre del proyecto</mat-error>
+                          </mat-error>
+                      </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field>
+                      <mat-label>Impacto del riesgo</mat-label>
+                        <mat-select formControlName="impact">
+                        <mat-option *ngFor="let p of impacts" [value]="p.id"> 
+                          {{ p.descripcion }}  {{ p.porcentaje }}%
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="submitted && f.impact.errors">
+                        <mat-error *ngIf="f.impact.errors.required">Seleccione el impacto</mat-error>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field>
+                      <mat-label>Calificar frecuencia del riesgo</mat-label>
+                      <mat-select formControlName="frequency">
+                        <mat-option *ngFor="let p of frequencies" [value]="p.id"> 
+                          {{ p.descripcion }} {{ p.porcentaje }}%
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="submitted && f.frequency.errors">
+                        <mat-error *ngIf="f.frequency.errors.required">Seleccione la frecuencia</mat-error>
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                      <mat-form-field>
+                          <mat-label>Descripción general</mat-label>
+                          <textarea matInput formControlName="description" maxlength="500" placeholder="Descripción general del proyecto" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                          <mat-error *ngIf="submitted && f.description.errors">
+                              <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del proyecto</mat-error>
+                          </mat-error>
+                      </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <mat-slide-toggle formControlName="affect">Este riesgo afecta la continuidad de tu negocio?</mat-slide-toggle>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-4">
+    
+                <div class="col-12">
+                  <div class="padding-top-input habladores">Ubicación inherente del riesgo</div>
+                  R.I = Riesgo Inherente
+                </div>
+
+                <div class="row justify-content-center">
+                  <div class="col-12 heatmap-grid">
+
+                    
+                    <div class="axis-title-horizontal"
+                        style="grid-column: 2 / span 5; grid-row: 7; text-align: center; font-weight: bold;">
+                      Impacto
+                    </div>
+
+                    <!-- Título vertical (Frecuencia) -->
+                    <div class="axis-title-vertical"
+                        style="grid-column: 1; grid-row: 2 / span 5; writing-mode: vertical-rl; text-align: center;">
+                      Frecuencia
+                    </div>
+
+
+                    <!-- Celdas del mapa de calor -->
+                    <div *ngFor="let item of heatmapItem"
+                        class="heatmap-cell"
+                        [ngStyle]="getCellStyle(item)">
+
+                        <span *ngIf="selectedCellKey === item.impacto + '-' + item.frecuencia"
+                            class="risk-badge">
+                          R.I
+                        </span>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+             </div> 
+          </mat-tab>
+
+          <mat-tab label="Asociar Responsables">
+            <div class="row">
+              <div class="col-10">
+                <div class="filter-class">
+                  <mat-form-field appearance="standard">
+                    <mat-label>Buscar Responsables</mat-label>
+                    <input matInput (keyup)="applyFilter($event)"  #input>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-2 btn-flex-end">
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+                  (click)="onShowList()"> 
+                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="mat-elevation-z8" [hidden]="showList">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSource" matSort>
+                  
+                  <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre y Apellido</th>
+                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>  
+                  </ng-container>
+                  <ng-container matColumnDef="dependence">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
+                    <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="position">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
+                    <td mat-cell *matCellDef="let row"> {{row.position}} </td>
+                  </ng-container> 
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="edit-color" matTooltip="Agregar"     
+                      (click)="onValidaUser(row)">
+                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"></mat-paginator>
+            </div>
+
+            <div class="mat-elevation-z8" [hidden]="showListSelect">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceSelect" matSort>
+                  
+                  <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Responsable</th>
+                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>  
+                  </ng-container>
+                  <ng-container matColumnDef="dependence">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
+                    <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="position">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
+                    <td mat-cell *matCellDef="let row"> {{row.position}} </td>
+                  </ng-container> 
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
+                      (click)="onDelete(row)">
+                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Asociar Causas y Consecuencias">
+            <div class="row">
+              <div class="col-10">
+                <div class="filter-class">
+                  <mat-form-field appearance="standard">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilterCause($event)"  #input>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-2 btn-flex-end">
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+                  (click)="onShowListCause()"> 
+                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                </button>
+              </div>
+            </div>
+ 
+            <div class="mat-elevation-z8" [hidden]="showListCause">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceCause" matSort #sortCauses="matSort">
+
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+                
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Proceso"     
+                      (click)="onValideCause(row)">
+                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsCause"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsCause" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorCause></mat-paginator>
+            </div>
+         
+
+            <div class="mat-elevation-z8" [hidden]="showListSelectCause">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceCauseSelect" matSort>
+                  
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>  
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
+                      (click)="onDeleteCause(row)">
+                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsCause"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsCause" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Asociar Controles">
+            <div class="row" [hidden]="loading">
+              <div class="col-10">
+                <div class="filter-class">
+                  <mat-form-field appearance="standard">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilterControl($event)"  #input>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-2 btn-flex-end">
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+                  (click)="onShowListControl()"> 
+                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                </button>
+              </div>
+            </div>
+ 
+            <div class="mat-elevation-z8" [hidden]="showListControl">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceControl" matSort #sortProcess="matSort">
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Diseño</th>
+                    <td mat-cell *matCellDef="let row"> {{row.qualify}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="execution">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Ejecución</th>
+                    <td mat-cell *matCellDef="let row"> {{row.executionType}} </td>
+                  </ng-container>
+                
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Control"     
+                      (click)="onValidaControl(row)">
+                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      </button>
+                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"     
+                      (click)="onResponsibleControl(row)">
+                        <mat-icon class="font-weight-boldest">face</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsControl"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorControl></mat-paginator>
+            </div>
+
+            <div class="mat-elevation-z8" [hidden]="showListSelectControl">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceControlSelect" matSort #sortControl="matSort">
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Diseño</th>
+                    <td mat-cell *matCellDef="let row"> {{row.qualify}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="execution">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Ejecución</th>
+                    <td mat-cell *matCellDef="let row"> {{row.executionType}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Proceso"     
+                      (click)="onDeleteControl(row)">
+                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsControl"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Asociar Procesos">
+            <div class="row" [hidden]="loading">
+              <div class="col-10">
+                <div class="filter-class">
+                  <mat-form-field appearance="standard">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilterProcess($event)"  #input>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-2 btn-flex-end">
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+                  (click)="onShowListProcess()"> 
+                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                </button>
+              </div>
+            </div>
+ 
+            <div class="mat-elevation-z8" [hidden]="showListProcess">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceProcess" matSort #sortProcess="matSort">
+
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+                    <td mat-cell *matCellDef="let row"> {{getType(row.type)}} </td>
+                  </ng-container>
+                  
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+                    <td mat-cell *matCellDef="let row"> {{getCategory(row.category)}} </td>
+                  </ng-container>
+                      
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Proceso"     
+                      (click)="onValidaProcess(row)">
+                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      </button>
+                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"     
+                      (click)="onResponsibleProcess(row)">
+                        <mat-icon class="font-weight-boldest">face</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsProcess"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorProcess></mat-paginator>
+            </div>
+
+            <div class="mat-elevation-z8" [hidden]="showListSelectProcess">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceProcessSelect" matSort #sortProcess="matSort">
+
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+                    <td mat-cell *matCellDef="let row"> {{getType(row.type)}} </td>
+                  </ng-container>
+                  
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+                    <td mat-cell *matCellDef="let row"> {{getCategory(row.category)}} </td>
+                  </ng-container>
+                
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                    <td mat-cell *matCellDef="let row">
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Proceso"     
+                      (click)="onDeleteProcess(row)">
+                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsProcess"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess" 
+                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                  > 
+                  </tr>
+          
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            
+          </mat-tab>
+          
+        </mat-tab-group>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="btn-flex-end">
+              <div class="margin-button">
+                <button mat-raised-button class="button-add-color" (click)="back()">
+                  <div class="btn-content">
+                    <div class="button-txt">
+                      Regresar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>undo</mat-icon>
+                    </div>
+                  </div>
+                </button>
+              </div>  
+        
+              <button  mat-raised-button [disabled]="loading" class="button-add-color" (click)="onSubmit()">
+                <div class="btn-content">
+                    <div class="button-txt">
+                      Guardar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>save</mat-icon>
+                    </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+

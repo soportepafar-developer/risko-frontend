@@ -1,0 +1,226 @@
+<div class="main-content">
+  <nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink=".">Causas y Consecuencias</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Crear</li>
+    </ol>
+  </nav>
+ 
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Información General">
+            <div class="row padding-top-input">
+              <div class="col-12">
+                  <mat-form-field>
+                      <mat-label>Nombre</mat-label>
+                      <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" >
+                      <mat-error *ngIf="submitted && f.name.errors">
+                          <mat-error *ngIf="f.name.errors.required">Ingrese nombre del proyecto</mat-error>
+                      </mat-error>
+                  </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>Tipo</mat-label>
+                  <mat-select formControlName="type" (ngModelChange)="getCategory($event)">
+                    <mat-option *ngFor="let item of type" [value]="item.value">
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="submitted && f.type.errors">
+                    <mat-error *ngIf="f.type.errors.required">Seleccione tipo</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>Categoria</mat-label>
+                  <mat-select placeholder="Categoria" formControlName="category">
+                    <mat-option *ngFor="let item of category" [value]="item.value">
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="submitted && f.category.errors">
+                    <mat-error *ngIf="f.category.errors.required">Seleccione la categoria</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                  <mat-form-field>
+                      <mat-label>Descripción general</mat-label>
+                      <textarea matInput formControlName="description" maxlength="500" placeholder="Descripción general" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                      <mat-error *ngIf="submitted && f.description.errors">
+                          <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del proyecto</mat-error>
+                      </mat-error>
+                  </mat-form-field>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Asociar Riesgos">
+            <div class="row">
+              <div class="col-10">
+                <div class="filter-class p-top">
+                  <mat-form-field appearance="standard">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)"  #input>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-2 btn-flex-end">
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+                  (click)="onShowListRisk()"> 
+                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                </button>
+              </div>
+ 
+              <div class="mat-elevation-z8" [hidden]="showListRisks">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="dataSourceRisk" matSort #sortRisks="matSort">
+
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                      <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="inherente">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Inherente</th>
+                        <td mat-cell *matCellDef="let row" 
+                          [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
+                          {{ getInherenteData(row)?.value || '—' }}
+                        </td>
+                    </ng-container>
+                  
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                      <td mat-cell *matCellDef="let row">
+                     
+                        <button mat-icon-button class="edit-color" matTooltip="Agregar"     
+                        (click)="onAdd(row)">
+                            <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                        </button>
+                   
+                        <button mat-icon-button class="edit-color" matTooltip="Responsables"     
+                        (click)="onResponsibleRiesgo(row)">
+                          <mat-icon class="font-weight-boldest">face</mat-icon>
+                        </button>
+
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsRisk"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk" 
+                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                    > 
+                    </tr>
+            
+                    <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    </tr>
+                  </table>
+                </div>
+                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorRisks></mat-paginator>
+              </div>
+
+              <div class="mat-elevation-z8" [hidden]="showListSelectRisks">
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="dataSourceRiskSelect" matSort #sortRisks="matSort">
+
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                      <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="inherente">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header>Inherente</th>
+                        <td mat-cell *matCellDef="let row" 
+                          [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
+                          {{ getInherenteData(row)?.value || '—' }}
+                      </td>
+                    </ng-container>
+                  
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                      <td mat-cell *matCellDef="let row">
+                     
+                        <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
+                        (click)="onDeleteRisk(row)">
+                            <mat-icon class="font-weight-boldest">delete</mat-icon>
+                        </button>
+
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsRisk"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk" 
+                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+                    > 
+                    </tr>
+            
+                    <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    </tr>
+                  </table>
+                </div>
+                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorRisks></mat-paginator>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="btn-flex-end">
+              <div class="margin-button">
+                <button mat-raised-button class="button-add-color" (click)="back()">
+                  <div class="btn-content">
+                    <div class="button-txt">
+                      Regresar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>undo</mat-icon>
+                    </div>
+                  </div>
+                </button>
+              </div>  
+        
+              <button  mat-raised-button [disabled]="loading" class="button-add-color" (click)="onSubmit()">
+                <div class="btn-content">
+                    <div class="button-txt">
+                      Guardar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>save</mat-icon>
+                    </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+

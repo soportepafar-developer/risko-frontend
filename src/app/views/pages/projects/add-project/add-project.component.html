@@ -1,0 +1,174 @@
+<div class="main-content">
+  <nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink=".">Proyecto</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Crear</li>
+    </ol>
+  </nav>
+ 
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="col-12">
+              <mat-form-field>
+                  <mat-label>Nombre</mat-label>
+                  <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" >
+                  <mat-error *ngIf="submitted && f.name.errors">
+                      <mat-error *ngIf="f.name.errors.required">Ingrese nombre del proyecto</mat-error>
+                  </mat-error>
+              </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+              <mat-form-field>
+                  <mat-label>Descripción general</mat-label>
+                  <textarea matInput formControlName="description" maxlength="500" placeholder="Descripción general del proyecto" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                  <mat-error *ngIf="submitted && f.description.errors">
+                      <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del proyecto</mat-error>
+                  </mat-error>
+              </mat-form-field>
+          </div>
+        </div>
+    
+
+        <div class="row">
+          <div class="col-10">
+            <div class="filter-class">
+              <mat-form-field appearance="standard">
+                <mat-label>Buscar Responsables</mat-label>
+                <input matInput (keyup)="applyFilter($event)"  #input>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="col-2 btn-flex-end">
+            <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
+              (click)="onShowList()"> 
+              <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mat-elevation-z8" [hidden]="showList">
+          <div class="table-responsive">
+            <table mat-table [dataSource]="dataSource" matSort>
+              
+              <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre y Apellido</th>
+                <td mat-cell *matCellDef="let row"> {{row.fullName}}  </td>  
+              </ng-container>
+              <ng-container matColumnDef="dependence">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
+                <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
+                <td mat-cell *matCellDef="let row"> {{row.position}} </td>
+              </ng-container> 
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let row">
+                  <button mat-icon-button class="edit-color" matTooltip="Agregar"     
+                  (click)="onAdd(row)">
+                      <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+              > 
+              </tr>
+      
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+              </tr>
+            </table>
+          </div>
+          <mat-paginator [pageSizeOptions]="[5, 10]" aria-label="Select page of users"></mat-paginator>
+        </div>
+
+        <div class="mat-elevation-z8" [hidden]="showListSelect">
+          <div class="table-responsive">
+            <table mat-table [dataSource]="dataSourceSelect" matSort>
+              
+              <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Resposable</th>
+                <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>  
+              </ng-container>
+              <ng-container matColumnDef="dependence">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
+                <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
+                <td mat-cell *matCellDef="let row"> {{row.position}} </td>
+              </ng-container> 
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                <td mat-cell *matCellDef="let row">
+                  <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
+                  (click)="onDelete(row)">
+                      <mat-icon class="font-weight-boldest">delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns" 
+                (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
+              > 
+              </tr>
+      
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+              </tr>
+            </table>
+          </div>
+          <mat-paginator [pageSizeOptions]="[5, 10]" aria-label="Select page of users"></mat-paginator>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="btn-flex-end">
+              <div class="margin-button">
+                <button mat-raised-button class="button-add-color" (click)="back()">
+                  <div class="btn-content">
+                    <div class="button-txt">
+                      Regresar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>undo</mat-icon>
+                    </div>
+                  </div>
+                </button>
+              </div>  
+        
+              <button  mat-raised-button [disabled]="loading" class="button-add-color" (click)="onSubmit()">
+                <div class="btn-content">
+                    <div class="button-txt">
+                      Guardar
+                    </div>
+                    <div class="icon">
+                      <mat-icon>save</mat-icon>
+                    </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
