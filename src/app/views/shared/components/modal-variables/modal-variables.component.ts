@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'; 
 import { ControlParams } from 'src/app/core/models/Risk/control';
 import { ControlService } from 'src/app/core/services/Riesgo/control.service';
@@ -14,12 +14,12 @@ export class ModalVariablesComponent implements OnInit {
   title: string = '';
   submitted = false;
   loading = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   constructor(
     private controlService: ControlService,
      public dialogRef: MatDialogRef<ModalVariablesComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
   ) {
     this.myFormValues();
   }

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ImpactoFrecuencia } from 'src/app/core/models/Risk/impacto-frecuencia';
 import { FrecuenceService } from 'src/app/core/services/Riesgo/frequency.service';
@@ -12,7 +12,7 @@ export interface DialogData { values: ImpactoFrecuencia, module: string }
   templateUrl: './modal-impact.component.html'
 })
 export class ModalImpactComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   submitted = false;
   loading = false;
   title: string = '';
@@ -22,7 +22,7 @@ export class ModalImpactComponent implements OnInit {
     private frecuenceService: FrecuenceService,
      public dialogRef: MatDialogRef<ModalImpactComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
   ) {    
     this.myFormValues();
   }

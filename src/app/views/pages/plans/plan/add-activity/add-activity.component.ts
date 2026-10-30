@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,7 +17,7 @@ export interface DialogData { plan: Plan }
   templateUrl: './add-activity.component.html'
 })
 export class AddActivityComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   selectedRow: any;
   title: string = '';
   responsibles: Responsibles[];
@@ -32,7 +32,7 @@ export class AddActivityComponent implements OnInit {
     private userService: UserService,
     private activityService: ActivityService,
     public dialogRef: MatDialogRef<AddActivityComponent>,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
      this.myFormValues();

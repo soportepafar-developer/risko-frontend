@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'; 
 import Swal from 'sweetalert2';
 import { ControlParams } from 'src/app/core/models/Risk/control';
@@ -15,14 +15,14 @@ export class ModalSolidityComponent implements OnInit {
   title: string = '';
   submitted = false;
   loading = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   color: string = '#000000'; // Default color
 
   constructor(
     private controlService: ControlService,
      public dialogRef: MatDialogRef<ModalSolidityComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
   ) {
     this.myFormValues();
   }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, NgForm, Validators } from '@angular/forms';
 import { SelectOption } from '../../../../core/models/select-option';
 import { environment } from '../../../../../environments/environment';
 import { RolesPermissionsService } from 'src/app/core/services/roles-permissions.service';
@@ -15,11 +15,11 @@ export class RolStoreComponent implements OnInit {
   private data$: Observable<Rol>;
   loading = false;
   submitted = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   id: number;
 
   constructor(private rolesService: RolesPermissionsService,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
            private router: Router,
   ) { 
     this.myFormValues();

@@ -1,5 +1,5 @@
 import { Component, OnInit, Type, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -30,7 +30,7 @@ import { Structure } from 'src/app/core/models/structure';
 export class AddProcessComponent implements OnInit {
   private data$: Observable<Process>;
   responsables: Responsibles[];
-  form: FormGroup;
+  form: UntypedFormGroup;
   id: number;
   loading = false;
   submitted = false;
@@ -79,7 +79,7 @@ export class AddProcessComponent implements OnInit {
     private userService: UserService,
     private impactService: ImpactService,
     private structureService: StructureService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     public matDialog: MatDialog,
     private cdr: ChangeDetectorRef
@@ -461,12 +461,12 @@ export class AddProcessComponent implements OnInit {
       });
     }
   
-    get levelsFormArray(): FormArray {
-      return this.form.get('levels') as FormArray;
+    get levelsFormArray(): UntypedFormArray {
+      return this.form.get('levels') as UntypedFormArray;
     }
   
-    getLevelControl(index: number): FormControl {
-      return this.levelsFormArray.at(index) as FormControl;
+    getLevelControl(index: number): UntypedFormControl {
+      return this.levelsFormArray.at(index) as UntypedFormControl;
     }
 
 }

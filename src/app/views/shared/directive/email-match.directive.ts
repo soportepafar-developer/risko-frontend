@@ -1,5 +1,5 @@
 import { Directive, Input } from '@angular/core';
-import { NG_VALIDATORS, Validator, ValidationErrors, FormGroup } from '@angular/forms';
+import { NG_VALIDATORS, Validator, ValidationErrors, UntypedFormGroup } from '@angular/forms';
 
 @Directive({
   selector: '[emailMatch]',
@@ -12,7 +12,7 @@ export class EmailMatchDirective implements Validator {
 
   constructor() { }
 
-  validate(formGroup: FormGroup): ValidationErrors {
+  validate(formGroup: UntypedFormGroup): ValidationErrors {
     return EmailMatch(this.emailMatch[0], this.emailMatch[1])(formGroup);
   }
 
@@ -21,7 +21,7 @@ export class EmailMatchDirective implements Validator {
 }
 
 function EmailMatch(controlName: string, matchingControlName: string) {
-  return (formGroup: FormGroup) => {
+  return (formGroup: UntypedFormGroup) => {
     
     const control = formGroup.controls[controlName];
     const matchingControl = formGroup.controls[matchingControlName];

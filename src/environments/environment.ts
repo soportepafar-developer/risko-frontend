@@ -2,15 +2,15 @@ export const environment = {
   production: false,
   name_system: 'RISKO',
   ttl: 28800000,
-  //apiUrl: 'https://bofficegiepstage.pafar.com.ve/public/api',
-  apiAuth: 'http://localhost:8090/giep/public',
-  apiUrl: 'http://localhost:8090/giep/public/api',  //'https://bofficegiepstage.pafar.com.ve/public/api'
+  apiAuth: 'https://bofficeriesgostage.pafar.com.ve/public',
+  apiUrl: 'https://bofficeriesgostage.pafar.com.ve/public/api',
+  //apiUrl: 'http://localhost:8090/giep/public/api',  
   //apiUrl: 'https://giepboffice.pafar.com.ve/public/api',
   //apiAuth: 'https://giepboffice.pafar.com.ve/public',
-  appUrl: 'http://localhost:4200',  
-  wsserver:"https://wsplatformstage.pafar.com.ve",
-  localstorage:{
-    userKey : 'cusr'
+  appUrl: 'http://localhost:4200',
+  wsserver: "https://wsplatformstage.pafar.com.ve",
+  localstorage: {
+    userKey: 'cusr'
   },
   form: {
     url: {
@@ -48,38 +48,38 @@ export const environment = {
         pattern: '^[0-9\-]*$',
       }
     },
-    role_pattern:{
+    role_pattern: {
       validations: {
         pattern: '(ROLE)[A-Z\_]+',
       }
     },
-    file_extension:['doc', 'docx', 'pdf','xls', 'xlsx', 'png', 'jpg', 'jpge'],
-    file_imagen_extension:['png', 'jpg', 'jpge'],
-    file_acordo_extension:['pdf'],
+    file_extension: ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'png', 'jpg', 'jpge'],
+    file_imagen_extension: ['png', 'jpg', 'jpge'],
+    file_acordo_extension: ['pdf'],
     file_extension_pdf: ['pdf'],
-    file_extension_excel:['xls', 'xlsx']
+    file_extension_excel: ['xls', 'xlsx']
   },
   paginator: {
     default_page: 1,
     row_per_page: 8
   },
-  endpoints:{
-    handle_error_blackList:[
+  endpoints: {
+    handle_error_blackList: [
       '/login_check',
       '/recovery-password',
       '/changepassword',
       'security/login'
     ],
-    handler_auth_whiteList:[
+    handler_auth_whiteList: [
       '/recovery-password',
       '/changepassword'
     ]
   },
   superset: {
-        url:"https://psuperset.pafar.com.ve/api/v1/",
-        username: "admin",
-        first_name: "admin",
-        last_name: "analytic",
-        password: "pafarco1"
-    }
+    url: "https://psuperset.pafar.com.ve/api/v1/",
+    username: "admin",
+    first_name: "admin",
+    last_name: "analytic",
+    password: "pafarco1"
+  }
 };

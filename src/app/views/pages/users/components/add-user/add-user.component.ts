@@ -1,4 +1,4 @@
-import { FormBuilder, FormGroup, Validators,FormArray, FormControl, AbstractControl} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators,UntypedFormArray, UntypedFormControl, AbstractControl} from '@angular/forms';
 import { UserService } from './../../../../../core/services/user.service';
 import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
@@ -23,7 +23,7 @@ export class AddUserComponent implements OnInit {
   uidPattern = "^[VE][0-9]{7,9}$"; //Validate only VE and numbers
   loading = false;
   submitted = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   id: number;
 
   minDate = new Date(1950, 0, 1);
@@ -44,7 +44,7 @@ export class AddUserComponent implements OnInit {
     private userService: UserService,
     private structureService: StructureService,
     private commonsService: CommonsService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     ) {
       this.myFormValues();
@@ -89,12 +89,12 @@ export class AddUserComponent implements OnInit {
     });
   }
 
-  get levelsFormArray(): FormArray {
-    return this.form.get('levels') as FormArray;
+  get levelsFormArray(): UntypedFormArray {
+    return this.form.get('levels') as UntypedFormArray;
   }
 
-  getLevelControl(index: number): FormControl {
-    return this.levelsFormArray.at(index) as FormControl;
+  getLevelControl(index: number): UntypedFormControl {
+    return this.levelsFormArray.at(index) as UntypedFormControl;
   }
 
   setValue(){
@@ -124,18 +124,18 @@ export class AddUserComponent implements OnInit {
   }
 
   setRolesSeleccionados(rolesGuardados: { rol: string }[]) {
-    const formArray = this.form.get('roles') as FormArray;
+    const formArray = this.form.get('roles') as UntypedFormArray;
     formArray.clear(); // Limpiar si ya existían roles cargados
 
     rolesGuardados.forEach(r => {
       if (!formArray.value.includes(r.rol)) {
-        formArray.push(new FormControl(r.rol));
+        formArray.push(new UntypedFormControl(r.rol));
       }
     });
   }
 
   isChecked(value: string): boolean {
-    const formArray = this.form.get('roles') as FormArray;
+    const formArray = this.form.get('roles') as UntypedFormArray;
     return formArray.value.includes(value);
   } 
 
@@ -221,10 +221,10 @@ export class AddUserComponent implements OnInit {
 
 
   onCheckChange(event) {
-    const formArray: FormArray = this.form.get('roles') as FormArray;
+    const formArray: UntypedFormArray = this.form.get('roles') as UntypedFormArray;
 
     if(event.target.checked){
-      formArray.push(new FormControl(event.target.value));
+      formArray.push(new UntypedFormControl(event.target.value));
     }else{
       let i: number = 0;
       formArray.controls.forEach((ctrl: AbstractControl) => {

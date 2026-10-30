@@ -1,7 +1,7 @@
 import { environment } from '../../../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./change-pass.component.scss']
 })
 export class ChangePassComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   token:string;
   loading = false;
   submitted = false;
@@ -18,7 +18,7 @@ export class ChangePassComponent implements OnInit {
   environment = environment;
 
   constructor(private authService:AuthService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router:Router) {
     this.myFormValues();
    }

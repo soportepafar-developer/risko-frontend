@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
 export class AddProjectComponent implements OnInit {
   private data$: Observable<Project>;
   responsables: Responsibles[];
-  form: FormGroup;
+  form: UntypedFormGroup;
   id: number;
   loading = false;
   submitted = false;
@@ -37,7 +37,7 @@ export class AddProjectComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
   ) {
       this.myFormValues();

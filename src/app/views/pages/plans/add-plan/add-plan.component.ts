@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -41,7 +41,7 @@ export class AddPlanComponent implements OnInit {
   responsibles: Responsibles[];
 
 
-  form: FormGroup;
+  form: UntypedFormGroup;
   id: number;
   loading = false;
   submitted = false;
@@ -111,7 +111,7 @@ export class AddPlanComponent implements OnInit {
     private riskService: RiskService,
     private planService: PlanService,
     private impactService: ImpactService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private router: Router,
     public matDialog: MatDialog,
   ) {

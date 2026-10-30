@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { HeatmapItem, ImpactoFrecuencia } from 'src/app/core/models/Risk/impacto-frecuencia';
 import { ImpactService } from 'src/app/core/services/Riesgo/impact.service';
 import { FrecuenceService } from 'src/app/core/services/Riesgo/frequency.service';
@@ -17,7 +17,7 @@ import { Risk } from 'src/app/core/models/Risk/risk';
   styleUrls: ['./heat-map.component.scss']
 })
 export class HeatMapComponent implements OnInit {
-  form: FormGroup;
+  form: UntypedFormGroup;
   submitted = false;
   loading = false;
   impacts: ImpactoFrecuencia[] = [];
@@ -47,7 +47,7 @@ export class HeatMapComponent implements OnInit {
     private frequenceService: FrecuenceService,
     private riskService: RiskService,
     public matDialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
   ) { 
     this.myFormValues();
   }

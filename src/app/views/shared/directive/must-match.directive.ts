@@ -1,5 +1,5 @@
 import { Directive, Input } from '@angular/core';
-import { NG_VALIDATORS, Validator, ValidationErrors, FormGroup } from '@angular/forms';
+import { NG_VALIDATORS, Validator, ValidationErrors, UntypedFormGroup } from '@angular/forms';
 
 @Directive({
   selector: '[mustMatch]',
@@ -11,7 +11,7 @@ export class MustMatchDirective implements Validator {
 
   constructor() { }
 
-  validate(formGroup: FormGroup): ValidationErrors {
+  validate(formGroup: UntypedFormGroup): ValidationErrors {
     return MustMatch(this.mustMatch[0], this.mustMatch[1])(formGroup);
   }
 
@@ -20,7 +20,7 @@ export class MustMatchDirective implements Validator {
 }
 
 function MustMatch(controlName: string, matchingControlName: string) {
-  return (formGroup: FormGroup) => {
+  return (formGroup: UntypedFormGroup) => {
     
     const control = formGroup.controls[controlName];
     const matchingControl = formGroup.controls[matchingControlName];
