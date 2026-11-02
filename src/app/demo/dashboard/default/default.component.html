@@ -1,0 +1,66 @@
+<div class="dashboard">
+  <header class="dash-head">
+    <div>
+      <p class="eyebrow">Organización</p>
+      <h2>Resumen general</h2>
+      @if (user) {
+        <p class="welcome">Bienvenido, {{ user.firstName }} {{ user.lastName }}</p>
+      }
+    </div>
+    <div class="total-pill">
+      <strong>{{ total }}</strong>
+      <span>registros</span>
+    </div>
+  </header>
+
+  <div class="kpi-grid">
+    @for (metric of metrics; track metric.label) {
+      <a class="kpi" [routerLink]="metric.link" [style.--accent]="metric.color">
+        <span class="icon material-icons">{{ metric.icon }}</span>
+        <div>
+          <div class="value">{{ metric.value }}</div>
+          <div class="label">{{ metric.label }}</div>
+        </div>
+      </a>
+    }
+  </div>
+
+  <div class="chart-grid">
+    <section class="panel">
+      <h3>Distribución</h3>
+      <p class="panel-note">Participación de cada módulo en el total.</p>
+      @if (total > 0) {
+        <apx-chart
+          [series]="donutSeries"
+          [chart]="donutChart"
+          [labels]="labels"
+          [colors]="colors"
+          [legend]="donutLegend"
+          [dataLabels]="dataLabels"
+          [plotOptions]="donutPlot"
+          [stroke]="donutStroke"
+        />
+      } @else {
+        <div class="empty">
+          <span class="ring" aria-hidden="true"></span>
+          <p>Los gráficos aparecen cuando la empresa tiene registros.</p>
+        </div>
+      }
+    </section>
+
+    <section class="panel">
+      <h3>Comparación</h3>
+      <p class="panel-note">Cantidad registrada en cada módulo.</p>
+      <apx-chart
+        [series]="barSeries"
+        [chart]="barChart"
+        [xaxis]="barXaxis"
+        [colors]="colors"
+        [plotOptions]="barPlot"
+        [dataLabels]="barLabels"
+        [grid]="barGrid"
+        [legend]="barLegend"
+      />
+    </section>
+  </div>
+</div>
