@@ -10,6 +10,11 @@ export class Plan {
     id?: number;
     name: string;
     description?: string;
+    type?: string;
+    priority?: string;
+    status?: string;
+    budget?: number;
+    progress?: number;
     startDate: Date;
     endDate: Date;
     responsibles?: Responsibles[];

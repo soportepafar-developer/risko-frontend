@@ -12,17 +12,15 @@ import { Plan } from 'src/app/core/models/Risk/plan';
 import { PlanService } from 'src/app/core/services/Riesgo/plan.service';
 import { AddActivityComponent } from './add-activity/add-activity.component';
 
-
 @Component({
   imports: [...MATERIAL_FORMS],
   selector: 'app-plan',
   templateUrl: './plan.component.html'
 })
 export class PlanComponent implements OnInit {
-
   loading = true;
   selectedRow;
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'type', 'priority', 'status', 'progress', 'budget', 'actions'];
   dataSource: MatTableDataSource<Plan>;
   plansList: Plan[] = [];
 
@@ -30,23 +28,23 @@ export class PlanComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   constructor(
-      private planService: PlanService,
-      private router: Router,
-      public matDialog: MatDialog,
+    private planService: PlanService,
+    private router: Router,
+    public matDialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.getPlans(); //Falta el endpoint
+    this.getPlans();
   }
 
-  getPlans(){
+  getPlans() {
     this.planService.getAll().subscribe((data: Plan[]) => {
       this.plansList = data;
       this.initTable(data);
     });
   }
 
-  initTable(plan: Plan[]){
+  initTable(plan: Plan[]) {
     this.dataSource = new MatTableDataSource(plan);
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
@@ -63,7 +61,40 @@ export class PlanComponent implements OnInit {
     }
   }
 
-  addActivity(row: Plan){
+  getPriorityColor(priority: string): string {
+    switch ((priority || '').toLowerCase()) {
+      case 'alto':
+      case 'alta':
+        return '#F44336';
+      case 'medio':
+      case 'media':
+        return '#FF9800';
+      case 'bajo':
+      case 'baja':
+        return '#4CAF50';
+      default:
+        return '#8c8c8c';
+    }
+  }
+
+  getStatusColor(status: string): string {
+    switch ((status || '').toLowerCase()) {
+      case 'completado':
+        return '#66BB6A';
+      case 'en progreso':
+        return '#29B6F6';
+      case 'pendiente':
+        return '#FFA726';
+      case 'vencido':
+        return '#EF5350';
+      case 'cancelado':
+        return '#BDBDBD';
+      default:
+        return '#1677ff';
+    }
+  }
+
+  addActivity(row: Plan) {
     console.log(row);
     this.matDialog.open(AddActivityComponent, {
       data: { plan: row },
@@ -74,7 +105,7 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  onProcess(row: Plan){ 
+  onProcess(row: Plan) {
     this.matDialog.open(ModalGenericComponent, {
       data: { entity: row.processes, title: 'Procesos' },
       width: '70%',
@@ -84,8 +115,8 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  onEvent(row: Plan){
-    this.matDialog.open(ModalGenericComponent, { 
+  onEvent(row: Plan) {
+    this.matDialog.open(ModalGenericComponent, {
       data: { entity: row.events, title: 'Eventos' },
       width: '70%',
       maxWidth: '70vw',
@@ -94,17 +125,17 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  onControl(row: Plan){ 
-    this.matDialog.open(ModalGenericComponent, { 
+  onControl(row: Plan) {
+    this.matDialog.open(ModalGenericComponent, {
       data: { entity: row.controls, title: 'Controles' },
       width: '70%',
       maxWidth: '70vw',
       disableClose: true,
       id: 'modal-resposible-control'
-    });  
+    });
   }
 
-  onResponsible(row: Plan){
+  onResponsible(row: Plan) {
     this.matDialog.open(ModalResponsibleComponent, {
       data: { responsible: row.responsibles },
       width: '70%',
@@ -114,22 +145,22 @@ export class PlanComponent implements OnInit {
     });
   }
 
-  onRisks(row: Plan){
-    this.matDialog.open(ModalRiskComponent, { 
+  onRisks(row: Plan) {
+    this.matDialog.open(ModalRiskComponent, {
       data: { entity: row.risks, title: 'Riesgos' },
       width: '70%',
       maxWidth: '70vw',
       disableClose: true,
       id: 'modal-resposible-control'
-    });  
+    });
   }
 
-  onEdit(row: Plan){
+  onEdit(row: Plan) {
     this.router.navigate(['/plans/add-plan']);
     this.planService.sharingData = row;
   }
 
-  openAdd(){
+  openAdd() {
     this.router.navigate(['/plans/add-plan']);
   }
 }

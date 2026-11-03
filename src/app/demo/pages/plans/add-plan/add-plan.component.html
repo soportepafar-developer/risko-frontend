@@ -3,73 +3,235 @@
     <div class="card-body">
       <form [formGroup]="form">
         <mat-tab-group animationDuration="0ms">
+          <!-- PESTAÑA 1: INFORMACIÓN GENERAL -->
           <mat-tab label="Información General">
-
-            <div class="padding-top-input habladores">Escribe la información general de este plan de acción.</div>
+            <div class="padding-top-input habladores">Escribe la información general y estratégica de este plan de
+              acción.</div>
 
             <div class="row padding-top-input">
               <div class="col-12">
-                  <mat-form-field>
-                      <mat-label>Nombre</mat-label>
-                      <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" >
-                      <mat-error *ngIf="submitted && f.name.errors">
-                          <mat-error *ngIf="f.name.errors.required">Ingrese nombre del proyecto</mat-error>
-                      </mat-error>
-                  </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Nombre del Plan de Acción</mat-label>
+                  <input type="text" matInput formControlName="name" maxlength="250"
+                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                  <mat-error *ngIf="submitted && f.name.errors">
+                    <mat-error *ngIf="f.name.errors.required">Ingrese el nombre del plan de acción</mat-error>
+                  </mat-error>
+                </mat-form-field>
               </div>
             </div>
 
             <div class="row">
               <div class="col-12">
-                  <mat-form-field>
-                      <mat-label>Descripción</mat-label>
-                      <textarea matInput formControlName="description" maxlength="2000" placeholder="2000 caracteres máximo" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
-                      <mat-error *ngIf="submitted && f.description.errors">
-                          <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del evento</mat-error>
-                      </mat-error>
-                  </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Descripción y Objetivo</mat-label>
+                  <textarea matInput formControlName="description" rows="3" maxlength="2000"
+                    placeholder="Detalle qué se pretende lograr con la implementación de este plan..."
+                    [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                  <mat-error *ngIf="submitted && f.description.errors">
+                    <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del plan de
+                      acción</mat-error>
+                  </mat-error>
+                </mat-form-field>
               </div>
             </div>
 
+            <!-- FILA PIRANI: Tipo de Plan, Prioridad y Estado -->
             <div class="row">
               <div class="col-4">
-                <mat-form-field>
-                    <mat-label>Fecha de inicio</mat-label>
-                    <input formControlName="startDate" matInput [matDatepicker]="startDate" readonly [min]="minDate">
-                    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-                    <mat-datepicker #startDate></mat-datepicker>
+                <mat-form-field appearance="outline">
+                  <mat-label>Tipo de Plan</mat-label>
+                  <mat-select formControlName="type">
+                    <mat-option *ngFor="let item of planTypes" [value]="item.value">
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="submitted && f.type.errors">
+                    <mat-error *ngIf="f.type.errors.required">Seleccione el tipo de plan</mat-error>
+                  </mat-error>
                 </mat-form-field>
               </div>
 
               <div class="col-4">
-                <mat-form-field>
-                    <mat-label>Fecha de finalización</mat-label>
-                    <input formControlName="endDate" matInput [matDatepicker]="endDate" readonly [min]="minDate">
-                    <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
-                    <mat-datepicker #endDate></mat-datepicker>
+                <mat-form-field appearance="outline">
+                  <mat-label>Prioridad</mat-label>
+                  <mat-select formControlName="priority">
+                    <mat-option *ngFor="let item of priorities" [value]="item.value">
+                      <span [style.color]="item.color" style="font-weight: bold; margin-right: 4px;">●</span>
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="submitted && f.priority.errors">
+                    <mat-error *ngIf="f.priority.errors.required">Seleccione la prioridad</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-4">
+                <mat-form-field appearance="outline">
+                  <mat-label>Estado del Plan</mat-label>
+                  <mat-select formControlName="status">
+                    <mat-option *ngFor="let item of planStates" [value]="item.value">
+                      <span [style.color]="item.color" style="font-weight: bold; margin-right: 4px;">●</span>
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="submitted && f.status.errors">
+                    <mat-error *ngIf="f.status.errors.required">Seleccione el estado</mat-error>
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
 
-            
-  
+            <!-- FILA: Fechas, Presupuesto y Avance -->
+            <div class="row">
+              <div class="col-3">
+                <mat-form-field appearance="outline">
+                  <mat-label>Fecha de inicio</mat-label>
+                  <input formControlName="startDate" matInput [matDatepicker]="startDate" readonly [min]="minDate">
+                  <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                  <mat-datepicker #startDate></mat-datepicker>
+                  <mat-error *ngIf="submitted && f.startDate.errors">
+                    <mat-error *ngIf="f.startDate.errors.required">Ingrese la fecha de inicio</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-3">
+                <mat-form-field appearance="outline">
+                  <mat-label>Fecha de finalización</mat-label>
+                  <input formControlName="endDate" matInput [matDatepicker]="endDate" readonly [min]="minDate">
+                  <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                  <mat-datepicker #endDate></mat-datepicker>
+                  <mat-error *ngIf="submitted && f.endDate.errors">
+                    <mat-error *ngIf="f.endDate.errors.required">Ingrese la fecha de fin</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-3">
+                <mat-form-field appearance="outline">
+                  <mat-label>Presupuesto Estimado ($)</mat-label>
+                  <input type="number" matInput formControlName="budget" placeholder="0.00" min="0">
+                </mat-form-field>
+              </div>
+
+              <div class="col-3">
+                <mat-form-field appearance="outline">
+                  <mat-label>% Avance de Ejecución</mat-label>
+                  <input type="number" matInput formControlName="progress" min="0" max="100" placeholder="0">
+                  <span matSuffix>%&nbsp;</span>
+                </mat-form-field>
+              </div>
+            </div>
           </mat-tab>
 
+          <!-- PESTAÑA 2: ACTIVIDADES DEL PLAN (ESTILO PIRANI) -->
+          <mat-tab label="Actividades del Plan">
+            <div class="padding-top-input habladores">Desglosa las actividades o tareas específicas para ejecutar este
+              plan de acción.</div>
+
+            <div class="row padding-top-input align-items-center">
+              <div class="col-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Nombre de la tarea / actividad</mat-label>
+                  <input matInput [(ngModel)]="activityName" [ngModelOptions]="{standalone: true}"
+                    placeholder="Ej: Implementar doble factor de autenticación...">
+                </mat-form-field>
+              </div>
+
+              <div class="col-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Responsable de la tarea</mat-label>
+                  <input type="text"
+                    matInput
+                    placeholder="Escribe para buscar..."
+                    [formControl]="responsibleSearchCtrl"
+                    [matAutocomplete]="autoResponsible">
+                  <button *ngIf="activityUser || responsibleSearchCtrl.value" matSuffix mat-icon-button
+                    aria-label="Limpiar" (click)="clearResponsibleSearch($event)" type="button">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                  <mat-autocomplete #autoResponsible="matAutocomplete" [displayWith]="displayResponsibleFn"
+                    (optionSelected)="onResponsibleSelected($event)">
+                    <mat-option *ngFor="let user of filteredResponsibles$ | async" [value]="user">
+                      {{user.fullName}} <small class="text-muted" *ngIf="user.position"> - {{user.position}}</small>
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+
+              <div class="col-1 btn-flex-end">
+                <button mat-mini-fab class="button-add-color" matTooltip="Agregar actividad"
+                  (click)="addActivityInPlan()" type="button">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tabla de actividades añadidas -->
+            <div class="mat-elevation-z8" *ngIf="planActivities.length > 0">
+              <div class="table-responsive">
+                <table mat-table [dataSource]="dataSourceActivities">
+                  <ng-container matColumnDef="activity">
+                    <th mat-header-cell *matHeaderCellDef>Actividad / Tarea</th>
+                    <td mat-cell *matCellDef="let row">
+                      <span [style.text-decoration]="row.done ? 'line-through' : 'none'"
+                        [style.color]="row.done ? '#8c8c8c' : 'inherit'">
+                        {{row.activity}}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="fullName">
+                    <th mat-header-cell *matHeaderCellDef>Responsable</th>
+                    <td mat-cell *matCellDef="let row">{{row.fullName || '—'}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="done">
+                    <th mat-header-cell *matHeaderCellDef>Completada</th>
+                    <td mat-cell *matCellDef="let row">
+                      <mat-slide-toggle [checked]="row.done" (change)="toggleActivityDone(row)" color="primary">
+                        {{ row.done ? 'Completada' : 'Pendiente' }}
+                      </mat-slide-toggle>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let row; let i = index">
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar actividad"
+                        (click)="deleteActivityInPlan(i)" type="button">
+                        <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumnsActivities"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsActivities"></tr>
+                </table>
+              </div>
+            </div>
+            <div class="msg-no-found p-top" *ngIf="planActivities.length === 0">
+              <em>No hay actividades registradas aún para este plan. Puedes agregarlas arriba.</em>
+            </div>
+          </mat-tab>
+
+          <!-- PESTAÑA 3: ASOCIAR RESPONSABLES -->
           <mat-tab label="Asociar Responsables">
             <div class="row">
               <div class="col-10">
                 <div class="filter-class">
                   <mat-form-field appearance="outline">
                     <mat-label>Buscar Responsables</mat-label>
-                    <input matInput (keyup)="applyFilter($event)"  #input>
+                    <input matInput (keyup)="applyFilter($event)" #input>
                   </mat-form-field>
                 </div>
               </div>
 
               <div class="col-2 btn-flex-end">
-                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
-                  (click)="onShowList()"> 
-                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas" (click)="onShowList()">
+                  <mat-icon class="font-weight-boldest">autorenew</mat-icon>
                 </button>
               </div>
             </div>
@@ -77,39 +239,34 @@
             <div class="mat-elevation-z8" [hidden]="showList">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSource" matSort>
-                  
                   <ng-container matColumnDef="fullName">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre y Apellido</th>
-                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>  
+                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
                   </ng-container>
                   <ng-container matColumnDef="dependence">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
                     <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
                   </ng-container>
-
                   <ng-container matColumnDef="position">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
                     <td mat-cell *matCellDef="let row"> {{row.position}} </td>
-                  </ng-container> 
+                  </ng-container>
 
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="edit-color" matTooltip="Agregar"     
-                      (click)="onValidaUser(row)">
-                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      <button mat-icon-button class="edit-color" matTooltip="Agregar" (click)="onValidaUser(row)">
+                        <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
@@ -119,67 +276,61 @@
             <div class="mat-elevation-z8" [hidden]="showListSelect">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceSelect" matSort>
-                  
                   <ng-container matColumnDef="fullName">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Responsable</th>
-                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>  
+                    <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
                   </ng-container>
                   <ng-container matColumnDef="dependence">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dependencia</th>
                     <td mat-cell *matCellDef="let row"> {{row.dependence}} </td>
                   </ng-container>
-
                   <ng-container matColumnDef="position">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cargo</th>
                     <td mat-cell *matCellDef="let row"> {{row.position}} </td>
-                  </ng-container> 
+                  </ng-container>
 
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
-                      (click)="onDelete(row)">
-                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar" (click)="onDelete(row)">
+                        <mat-icon class="font-weight-boldest">delete</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
             </div>
           </mat-tab>
 
+          <!-- PESTAÑA 4: ASOCIAR RIESGOS -->
           <mat-tab label="Asociar Riesgos">
             <div class="row">
               <div class="col-10">
                 <div class="filter-class p-top">
                   <mat-form-field appearance="outline">
-                    <mat-label>Buscar</mat-label>
-                    <input matInput (keyup)="applyFilterRisks($event)"  #input>
+                    <mat-label>Buscar Riesgos</mat-label>
+                    <input matInput (keyup)="applyFilterRisks($event)" #input>
                   </mat-form-field>
                 </div>
               </div>
 
               <div class="col-2 btn-flex-end">
-                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
-                  (click)="onShowListRisk()"> 
-                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas" (click)="onShowListRisk()">
+                  <mat-icon class="font-weight-boldest">autorenew</mat-icon>
                 </button>
               </div>
- 
+
               <div class="mat-elevation-z8" [hidden]="showListRisks">
                 <div class="table-responsive">
                   <table mat-table [dataSource]="dataSourceRisk" matSort #sortRisks="matSort">
-
                     <ng-container matColumnDef="id">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                       <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -192,48 +343,41 @@
 
                     <ng-container matColumnDef="inherente">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header>Inherente</th>
-                        <td mat-cell *matCellDef="let row" 
-                          [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
-                          {{ getInherenteData(row)?.value || '—' }}
-                        </td>
+                      <td mat-cell *matCellDef="let row"
+                        [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
+                        {{ getInherenteData(row)?.value || '—' }}
+                      </td>
                     </ng-container>
-                  
+
                     <ng-container matColumnDef="actions">
                       <th mat-header-cell *matHeaderCellDef> Acciones </th>
                       <td mat-cell *matCellDef="let row">
-                     
-                        <button mat-icon-button class="edit-color" matTooltip="Agregar"     
-                        (click)="onAddRisk(row)">
-                            <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                        <button mat-icon-button class="edit-color" matTooltip="Agregar" (click)="onAddRisk(row)">
+                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
                         </button>
-                   
-                        <button mat-icon-button class="edit-color" matTooltip="Responsables"     
-                        (click)="onResponsibleRiesgo(row)">
+                        <button mat-icon-button class="edit-color" matTooltip="Responsables"
+                          (click)="onResponsibleRiesgo(row)">
                           <mat-icon class="font-weight-boldest">face</mat-icon>
                         </button>
-
                       </td>
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="displayedColumnsRisk"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk" 
-                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                    > 
-                    </tr>
-            
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk"
+                      (click)="selectedRow = selectedRow === row ? null : row"
+                      [ngClass]="{ 'selected': row === selectedRow }"></tr>
                     <tr class="mat-row" *matNoDataRow>
-                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                     </tr>
                   </table>
                 </div>
-                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorRisks></mat-paginator>
+                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"
+                  #paginatorRisks></mat-paginator>
               </div>
-
 
               <div class="mat-elevation-z8" [hidden]="showListSelectRisks">
                 <div class="table-responsive">
                   <table mat-table [dataSource]="dataSourceRiskSelect" matSort #sortRisks="matSort">
-
                     <ng-container matColumnDef="id">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                       <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -246,63 +390,58 @@
 
                     <ng-container matColumnDef="inherente">
                       <th mat-header-cell *matHeaderCellDef mat-sort-header>Inherente</th>
-                        <td mat-cell *matCellDef="let row" 
-                          [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
-                          {{ getInherenteData(row)?.value || '—' }}
-                        </td>
+                      <td mat-cell *matCellDef="let row"
+                        [ngStyle]="{ 'background-color': getInherenteData(row)?.color || 'transparent' }">
+                        {{ getInherenteData(row)?.value || '—' }}
+                      </td>
                     </ng-container>
-                  
+
                     <ng-container matColumnDef="actions">
                       <th mat-header-cell *matHeaderCellDef> Acciones </th>
                       <td mat-cell *matCellDef="let row">
-                     
-                        <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
-                        (click)="onDeleteRisk(row)">
-                            <mat-icon class="font-weight-boldest">delete</mat-icon>
+                        <button mat-icon-button class="delete-color" matTooltip="Eliminar" (click)="onDeleteRisk(row)">
+                          <mat-icon class="font-weight-boldest">delete</mat-icon>
                         </button>
-
                       </td>
                     </ng-container>
 
                     <tr mat-header-row *matHeaderRowDef="displayedColumnsRisk"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk" 
-                      (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                    > 
-                    </tr>
-            
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsRisk"
+                      (click)="selectedRow = selectedRow === row ? null : row"
+                      [ngClass]="{ 'selected': row === selectedRow }"></tr>
                     <tr class="mat-row" *matNoDataRow>
-                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                      <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                     </tr>
                   </table>
                 </div>
-                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorRisks></mat-paginator>
+                <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"
+                  #paginatorRisks></mat-paginator>
               </div>
             </div>
           </mat-tab>
 
+          <!-- PESTAÑA 5: ASOCIAR EVENTOS -->
           <mat-tab label="Asociar Eventos">
             <div class="row">
               <div class="col-10">
                 <div class="filter-class">
                   <mat-form-field appearance="outline">
-                    <mat-label>Buscar</mat-label>
-                    <input matInput (keyup)="applyFilterEvent($event)"  #input>
+                    <mat-label>Buscar Eventos</mat-label>
+                    <input matInput (keyup)="applyFilterEvent($event)" #input>
                   </mat-form-field>
                 </div>
               </div>
 
               <div class="col-2 btn-flex-end">
-                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
-                  (click)="onShowListEvent()"> 
-                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas" (click)="onShowListEvent()">
+                  <mat-icon class="font-weight-boldest">autorenew</mat-icon>
                 </button>
               </div>
             </div>
- 
+
             <div class="mat-elevation-z8" [hidden]="showListEvent">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceEvent" matSort #sortEvents="matSort">
-
                   <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                     <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -312,36 +451,33 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
                     <td mat-cell *matCellDef="let row"> {{row.name}} </td>
                   </ng-container>
-                
+
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="edit-color" matTooltip="Asociar Evento"     
-                      (click)="onValideEvent(row)">
-                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Evento"
+                        (click)="onValideEvent(row)">
+                        <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsEvent"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsEvent" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsEvent"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorEvent></mat-paginator>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"
+                #paginatorEvent></mat-paginator>
             </div>
-         
 
             <div class="mat-elevation-z8" [hidden]="showListSelectEvent">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceEventSelect" matSort>
-                  
                   <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                     <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -349,56 +485,53 @@
 
                   <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>  
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
                   </ng-container>
 
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="delete-color" matTooltip="Eliminar"     
-                      (click)="onDeleteEvent(row)">
-                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar" (click)="onDeleteEvent(row)">
+                        <mat-icon class="font-weight-boldest">delete</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsEvent"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsEvent" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsEvent"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
             </div>
           </mat-tab>
 
+          <!-- PESTAÑA 6: ASOCIAR CONTROLES -->
           <mat-tab label="Asociar Controles">
             <div class="row" [hidden]="loading">
               <div class="col-10">
                 <div class="filter-class">
                   <mat-form-field appearance="outline">
-                    <mat-label>Buscar</mat-label>
-                    <input matInput (keyup)="applyFilterControl($event)"  #input>
+                    <mat-label>Buscar Controles</mat-label>
+                    <input matInput (keyup)="applyFilterControl($event)" #input>
                   </mat-form-field>
                 </div>
               </div>
 
               <div class="col-2 btn-flex-end">
                 <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
-                  (click)="onShowListControl()"> 
-                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                  (click)="onShowListControl()">
+                  <mat-icon class="font-weight-boldest">autorenew</mat-icon>
                 </button>
               </div>
             </div>
- 
+
             <div class="mat-elevation-z8" [hidden]="showListControl">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceControl" matSort #sortProcess="matSort">
-
                   <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
                     <td mat-cell *matCellDef="let row"> {{row.name}} </td>
@@ -413,39 +546,37 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Ejecución</th>
                     <td mat-cell *matCellDef="let row"> {{row.executionType}} </td>
                   </ng-container>
-                
+
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="edit-color" matTooltip="Asociar Control"     
-                      (click)="onValidaControl(row)">
-                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Control"
+                        (click)="onValidaControl(row)">
+                        <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
                       </button>
-                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"     
-                      (click)="onResponsibleControl(row)">
+                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"
+                        (click)="onResponsibleControl(row)">
                         <mat-icon class="font-weight-boldest">face</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsControl"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorControl></mat-paginator>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"
+                #paginatorControl></mat-paginator>
             </div>
 
             <div class="mat-elevation-z8" [hidden]="showListSelectControl">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceControlSelect" matSort #sortControl="matSort">
-
                   <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
                     <td mat-cell *matCellDef="let row"> {{row.name}} </td>
@@ -464,50 +595,48 @@
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Proceso"     
-                      (click)="onDeleteControl(row)">
-                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Control"
+                        (click)="onDeleteControl(row)">
+                        <mat-icon class="font-weight-boldest">delete</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsControl"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsControl"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
             </div>
           </mat-tab>
 
+          <!-- PESTAÑA 7: ASOCIAR PROCESOS -->
           <mat-tab label="Asociar Procesos">
             <div class="row" [hidden]="loading">
               <div class="col-10">
                 <div class="filter-class">
                   <mat-form-field appearance="outline">
-                    <mat-label>Buscar</mat-label>
-                    <input matInput (keyup)="applyFilterProcess($event)"  #input>
+                    <mat-label>Buscar Procesos</mat-label>
+                    <input matInput (keyup)="applyFilterProcess($event)" #input>
                   </mat-form-field>
                 </div>
               </div>
 
               <div class="col-2 btn-flex-end">
                 <button mat-icon-button class="edit-color" matTooltip="Intercambiar Listas"
-                  (click)="onShowListProcess()"> 
-                    <mat-icon class="font-weight-boldest" >autorenew</mat-icon>
+                  (click)="onShowListProcess()">
+                  <mat-icon class="font-weight-boldest">autorenew</mat-icon>
                 </button>
               </div>
             </div>
- 
+
             <div class="mat-elevation-z8" [hidden]="showListProcess">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceProcess" matSort #sortProcess="matSort">
-
                   <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                     <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -522,44 +651,42 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
                     <td mat-cell *matCellDef="let row"> {{getType(row.type)}} </td>
                   </ng-container>
-                  
+
                   <ng-container matColumnDef="category">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
                     <td mat-cell *matCellDef="let row"> {{getCategory(row.category)}} </td>
                   </ng-container>
-                      
+
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="edit-color" matTooltip="Asociar Proceso"     
-                      (click)="onValidaProcess(row)">
-                          <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
+                      <button mat-icon-button class="edit-color" matTooltip="Asociar Proceso"
+                        (click)="onValidaProcess(row)">
+                        <mat-icon class="font-weight-boldest">add_circle_outline</mat-icon>
                       </button>
-                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"     
-                      (click)="onResponsibleProcess(row)">
+                      <button mat-icon-button class="edit-color" matTooltip="Ver Responsables"
+                        (click)="onResponsibleProcess(row)">
                         <mat-icon class="font-weight-boldest">face</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsProcess"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
-              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users" #paginatorProcess></mat-paginator>
+              <mat-paginator [pageSizeOptions]="[10, 20]" aria-label="Select page of users"
+                #paginatorProcess></mat-paginator>
             </div>
 
             <div class="mat-elevation-z8" [hidden]="showListSelectProcess">
               <div class="table-responsive">
                 <table mat-table [dataSource]="dataSourceProcessSelect" matSort #sortProcess="matSort">
-
                   <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
                     <td mat-cell *matCellDef="let row"> {{row.id}} </td>
@@ -574,63 +701,57 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
                     <td mat-cell *matCellDef="let row"> {{getType(row.type)}} </td>
                   </ng-container>
-                  
+
                   <ng-container matColumnDef="category">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
                     <td mat-cell *matCellDef="let row"> {{getCategory(row.category)}} </td>
                   </ng-container>
-                
+
                   <ng-container matColumnDef="actions">
                     <th mat-header-cell *matHeaderCellDef> Acciones </th>
                     <td mat-cell *matCellDef="let row">
-                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Proceso"     
-                      (click)="onDeleteProcess(row)">
-                          <mat-icon class="font-weight-boldest">delete</mat-icon>
+                      <button mat-icon-button class="delete-color" matTooltip="Eliminar Proceso"
+                        (click)="onDeleteProcess(row)">
+                        <mat-icon class="font-weight-boldest">delete</mat-icon>
                       </button>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumnsProcess"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess" 
-                    (click)="selectedRow = selectedRow === row ? null : row" [ngClass]="{ 'selected': row === selectedRow }"
-                  > 
-                  </tr>
-          
+                  <tr mat-row *matRowDef="let row; columns: displayedColumnsProcess"
+                    (click)="selectedRow = selectedRow === row ? null : row"
+                    [ngClass]="{ 'selected': row === selectedRow }"></tr>
                   <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan"</td>
+                    <td class="mat-cell msg-no-found" colspan="8">No hay datos que coincidan</td>
                   </tr>
                 </table>
               </div>
             </div>
-            
           </mat-tab>
-          
         </mat-tab-group>
 
+        <!-- BOTONES DE ACCIÓN -->
         <div class="row">
           <div class="col-12">
             <div class="btn-flex-end">
               <div class="margin-button">
-                <button mat-raised-button class="button-add-color" (click)="back()">
+                <button mat-raised-button class="button-add-color" (click)="back()" type="button">
                   <div class="btn-content">
-                    <div class="button-txt">
-                      Regresar
-                    </div>
+                    <div class="button-txt">Regresar</div>
                     <div class="icon">
                       <mat-icon>undo</mat-icon>
                     </div>
                   </div>
                 </button>
-              </div>  
-        
-              <button  mat-raised-button [disabled]="loading" class="button-add-color" (click)="onSubmit()">
+              </div>
+
+              <button mat-raised-button [disabled]="loading" class="button-add-color" (click)="onSubmit()"
+                type="button">
                 <div class="btn-content">
-                    <div class="button-txt">
-                      Guardar
-                    </div>
-                    <div class="icon">
-                      <mat-icon>save</mat-icon>
-                    </div>
+                  <div class="button-txt">Guardar</div>
+                  <div class="icon">
+                    <mat-icon>save</mat-icon>
+                  </div>
                 </div>
               </button>
             </div>
@@ -640,7 +761,3 @@
     </div>
   </div>
 </div>
-
-
-
-
