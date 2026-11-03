@@ -201,6 +201,17 @@ const routes: Routes = [
             loadComponent: () => import('./demo/pages/heat-maps/heat-map/heat-map.component').then((c) => c.HeatMapComponent)
           }
         ]
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./demo/pages/reports/reports.component').then((c) => c.ReportsComponent),
+        children: [
+          { path: '', redirectTo: 'report', pathMatch: 'full' },
+          {
+            path: 'report',
+            loadComponent: () => import('./demo/pages/reports/report/report.component').then((c) => c.ReportComponent)
+          }
+        ]
       }
     ]
   },

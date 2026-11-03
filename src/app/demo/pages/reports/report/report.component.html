@@ -1,0 +1,696 @@
+<div class="main-content report-page">
+  <!-- ENCABEZADO CORPORATIVO -->
+  <div class="report-header">
+    <div class="header-titles">
+      <span class="report-badge">Módulo de Reportes</span>
+      <h2 class="title">Informes de Gestión de Riesgos</h2>
+      <p class="subtitle">
+        Visualiza, filtra y exporta la matriz de riesgos, evaluación de controles, incidentes operativos y avance de planes de acción.
+      </p>
+    </div>
+  </div>
+
+  <!-- MEMBRETE SOLO PARA IMPRESIÓN (PRINT) -->
+  <div class="print-only-header">
+    <div class="print-logo">
+      <h2>RISKO — Plataforma de Gestión de Riesgos</h2>
+      <p>Reporte Oficial generado el: {{ reportDate | date:'medium' }}</p>
+    </div>
+  </div>
+
+  <!-- SELECTOR DE TIPOS DE REPORTES -->
+  <div class="report-nav-tabs no-print">
+    <button class="nav-tab-btn" [class.active]="activeTab === 'risks'" (click)="selectTab('risks')">
+      <mat-icon>warning</mat-icon>
+      <div class="tab-info">
+        <span class="tab-name">Matriz de Riesgos</span>
+        <small class="tab-count">{{ risks.length }} registros</small>
+      </div>
+    </button>
+
+    <button class="nav-tab-btn" [class.active]="activeTab === 'controls'" (click)="selectTab('controls')">
+      <mat-icon>security</mat-icon>
+      <div class="tab-info">
+        <span class="tab-name">Solidez de Controles</span>
+        <small class="tab-count">{{ controls.length }} registros</small>
+      </div>
+    </button>
+
+    <button class="nav-tab-btn" [class.active]="activeTab === 'events'" (click)="selectTab('events')">
+      <mat-icon>notifications_active</mat-icon>
+      <div class="tab-info">
+        <span class="tab-name">Eventos de Pérdida</span>
+        <small class="tab-count">{{ events.length }} registros</small>
+      </div>
+    </button>
+
+    <button class="nav-tab-btn" [class.active]="activeTab === 'plans'" (click)="selectTab('plans')">
+      <mat-icon>assignment_turned_in</mat-icon>
+      <div class="tab-info">
+        <span class="tab-name">Planes de Acción</span>
+        <small class="tab-count">{{ plans.length }} registros</small>
+      </div>
+    </button>
+
+    <button class="nav-tab-btn" [class.active]="activeTab === 'processes'" (click)="selectTab('processes')">
+      <mat-icon>account_tree</mat-icon>
+      <div class="tab-info">
+        <span class="tab-name">Cobertura Procesos</span>
+        <small class="tab-count">{{ processes.length }} registros</small>
+      </div>
+    </button>
+  </div>
+
+  <!-- TARJETAS DE KPIS PRINCIPALES -->
+  <div class="kpi-row">
+    <div class="kpi-card" [style.--border-accent]="kpi1.color">
+      <span class="kpi-title">{{ kpi1.label }}</span>
+      <span class="kpi-val" [style.color]="kpi1.color">{{ kpi1.value }}</span>
+    </div>
+
+    <div class="kpi-card" [style.--border-accent]="kpi2.color">
+      <span class="kpi-title">{{ kpi2.label }}</span>
+      <span class="kpi-val" [style.color]="kpi2.color">{{ kpi2.value }}</span>
+    </div>
+
+    <div class="kpi-card" [style.--border-accent]="kpi3.color">
+      <span class="kpi-title">{{ kpi3.label }}</span>
+      <span class="kpi-val" [style.color]="kpi3.color">{{ kpi3.value }}</span>
+    </div>
+
+    <div class="kpi-card" [style.--border-accent]="kpi4.color">
+      <span class="kpi-title">{{ kpi4.label }}</span>
+      <span class="kpi-val" [style.color]="kpi4.color">{{ kpi4.value }}</span>
+    </div>
+  </div>
+
+  <!-- SECCIÓN GRÁFICA Y FILTROS INTERACTIVOS -->
+  <div class="row analytics-row no-print">
+    <!-- FILTROS -->
+    <div class="col-lg-7 col-md-12">
+      <div class="card filter-panel h-100">
+        <div class="card-header">
+          <strong>Filtros del Reporte</strong>
+          <button mat-button class="btn-clear" (click)="resetFilters()">
+            <mat-icon>refresh</mat-icon> Limpiar Filtros
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 col-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Buscar por texto...</mat-label>
+                <input matInput [(ngModel)]="searchTerm" (input)="onFilterChange()" placeholder="Nombre, código o descripción...">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Proceso (para Riesgos y Eventos) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'risks' || activeTab === 'events'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Filtrar por Proceso</mat-label>
+                <mat-select [(ngModel)]="selectedProcessId" (selectionChange)="onFilterChange()">
+                  <mat-option [value]="null">Todos los procesos</mat-option>
+                  <mat-option *ngFor="let p of processes" [value]="p.id">{{ p.name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Nivel de Riesgo (para Riesgos) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'risks'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nivel de Riesgo</mat-label>
+                <mat-select [(ngModel)]="selectedLevel" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todos los niveles</mat-option>
+                  <mat-option value="Crítico">Crítico</mat-option>
+                  <mat-option value="Alto">Alto</mat-option>
+                  <mat-option value="Medio">Medio</mat-option>
+                  <mat-option value="Bajo">Bajo</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Solidez (para Controles) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'controls'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nivel de Solidez</mat-label>
+                <mat-select [(ngModel)]="selectedLevel" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todas las solideces</mat-option>
+                  <mat-option value="Alta">Alta</mat-option>
+                  <mat-option value="Media">Media</mat-option>
+                  <mat-option value="Baja">Baja</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Tipo de Ejecución (para Controles) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'controls'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tipo de Ejecución</mat-label>
+                <mat-select [(ngModel)]="selectedType" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todos los tipos</mat-option>
+                  <mat-option value="Manual">Manual</mat-option>
+                  <mat-option value="Automático">Automático</mat-option>
+                  <mat-option value="Combinado">Combinado</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Criticidad (para Eventos) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'events'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Criticidad</mat-label>
+                <mat-select [(ngModel)]="selectedLevel" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todas las criticidades</mat-option>
+                  <mat-option value="Baja">Baja</mat-option>
+                  <mat-option value="Media">Media</mat-option>
+                  <mat-option value="Alta">Alta</mat-option>
+                  <mat-option value="Muy Alta">Muy Alta</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Estado (para Planes y Eventos) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'plans' || activeTab === 'events'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Estado</mat-label>
+                <mat-select [(ngModel)]="selectedState" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todos los estados</mat-option>
+                  <ng-container *ngIf="activeTab === 'plans'">
+                    <mat-option value="Pendiente">Pendiente</mat-option>
+                    <mat-option value="En progreso">En progreso</mat-option>
+                    <mat-option value="Completado">Completado</mat-option>
+                  </ng-container>
+                  <ng-container *ngIf="activeTab === 'events'">
+                    <mat-option value="Identificado">Identificado</mat-option>
+                    <mat-option value="En análisis">En análisis</mat-option>
+                    <mat-option value="Mitigado">Mitigado</mat-option>
+                    <mat-option value="Cerrado">Cerrado</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Tipo de Plan (para Planes) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'plans'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tipo de Plan</mat-label>
+                <mat-select [(ngModel)]="selectedType" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todos los tipos</mat-option>
+                  <mat-option value="Preventivo">Preventivo</mat-option>
+                  <mat-option value="Correctivo">Correctivo</mat-option>
+                  <mat-option value="Detectivo">Detectivo</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Filtro por Tipo de Proceso (para Procesos) -->
+            <div class="col-md-6 col-12" *ngIf="activeTab === 'processes'">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tipo de Proceso</mat-label>
+                <mat-select [(ngModel)]="selectedType" (selectionChange)="onFilterChange()">
+                  <mat-option value="">Todos los tipos</mat-option>
+                  <mat-option value="1">Estratégico</mat-option>
+                  <mat-option value="2">Medular / Operativo</mat-option>
+                  <mat-option value="3">Apoyo</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRÁFICO DINÁMICO -->
+    <div class="col-lg-5 col-md-12">
+      <div class="card chart-panel h-100">
+        <div class="card-header">
+          <strong *ngIf="activeTab === 'risks'">Distribución de Riesgos por Nivel</strong>
+          <strong *ngIf="activeTab === 'controls'">Solidez de Controles</strong>
+          <strong *ngIf="activeTab === 'plans'">Estado de Planes de Acción</strong>
+          <strong *ngIf="activeTab === 'events' || activeTab === 'processes'">Resumen General</strong>
+        </div>
+        <div class="card-body d-flex align-items-center justify-content-center">
+          <div *ngIf="activeTab === 'risks'" class="w-100">
+            <apx-chart
+              [series]="riskChartSeries"
+              [chart]="donutChartOptions.chart"
+              [labels]="riskChartLabels"
+              [colors]="riskChartColors"
+              [legend]="donutChartOptions.legend"
+              [dataLabels]="donutChartOptions.dataLabels"
+              [plotOptions]="donutChartOptions.plotOptions"
+              [stroke]="donutChartOptions.stroke">
+            </apx-chart>
+          </div>
+
+          <div *ngIf="activeTab === 'controls'" class="w-100">
+            <apx-chart
+              [series]="controlChartSeries"
+              [chart]="donutChartOptions.chart"
+              [labels]="controlChartLabels"
+              [colors]="controlChartColors"
+              [legend]="donutChartOptions.legend"
+              [dataLabels]="donutChartOptions.dataLabels"
+              [plotOptions]="donutChartOptions.plotOptions"
+              [stroke]="donutChartOptions.stroke">
+            </apx-chart>
+          </div>
+
+          <div *ngIf="activeTab === 'plans'" class="w-100">
+            <apx-chart
+              [series]="planChartSeries"
+              [chart]="donutChartOptions.chart"
+              [labels]="planChartLabels"
+              [colors]="planChartColors"
+              [legend]="donutChartOptions.legend"
+              [dataLabels]="donutChartOptions.dataLabels"
+              [plotOptions]="donutChartOptions.plotOptions"
+              [stroke]="donutChartOptions.stroke">
+            </apx-chart>
+          </div>
+
+          <div *ngIf="activeTab === 'events' || activeTab === 'processes'" class="text-center p-3 text-muted">
+            <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #023e8a;">assessment</mat-icon>
+            <p class="mt-2 mb-0">Total registros filtrados: <strong>{{ activeTab === 'events' ? dataSourceEvents.data.length : dataSourceProcesses.data.length }}</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA 1: REPORTE DE MATRIZ DE RIESGOS -->
+  <div class="card table-card" *ngIf="activeTab === 'risks'">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><strong>Matriz de Riesgos Identificados</strong> ({{ dataSourceRisks.data.length }} registros)</span>
+      <div class="action-buttons no-print">
+        <button mat-flat-button class="btn-export-excel" (click)="exportToExcel()">
+          <mat-icon>file_download</mat-icon>
+          Exportar Excel
+        </button>
+        <button mat-flat-button class="btn-print-pdf" (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourceRisks" class="w-100">
+          <ng-container matColumnDef="code">
+            <th mat-header-cell *matHeaderCellDef>Código</th>
+            <td mat-cell *matCellDef="let r; let i = index">
+              <strong>{{ r.code || ('R-' + (i + 1)) }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Riesgo</th>
+            <td mat-cell *matCellDef="let r">
+              <div class="risk-info-cell">
+                <span class="cell-main-title">{{ r.name }}</span>
+                <small class="text-muted d-block" *ngIf="r.description">{{ r.description | slice:0:70 }}{{ (r.description && r.description.length > 70) ? '...' : '' }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="process">
+            <th mat-header-cell *matHeaderCellDef>Proceso</th>
+            <td mat-cell *matCellDef="let r">{{ getProcessNames(r.processes) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="impact">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Impacto</th>
+            <td mat-cell *matCellDef="let r" class="text-center">{{ r.impact || 1 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="frequency">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Frecuencia</th>
+            <td mat-cell *matCellDef="let r" class="text-center">{{ r.frequency || 1 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="inherentLevel">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Nivel Inherente</th>
+            <td mat-cell *matCellDef="let r" class="text-center">
+              <span class="level-badge" [style.background-color]="getRiskLevel(r).color">
+                {{ getRiskLevel(r).label }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="controls">
+            <th mat-header-cell *matHeaderCellDef>Controles Asociados</th>
+            <td mat-cell *matCellDef="let r">
+              <span *ngIf="!r.controls || r.controls.length === 0" class="badge-none">Sin Control</span>
+              <span *ngIf="r.controls && r.controls.length > 0" class="badge-control-count" matTooltip="{{ getControlNames(r.controls) }}">
+                {{ r.controls.length }} {{ r.controls.length === 1 ? 'control' : 'controles' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="residualLevel">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Nivel Residual</th>
+            <td mat-cell *matCellDef="let r" class="text-center">
+              <span class="level-badge" [style.background-color]="getResidualLevel(r).color">
+                {{ getResidualLevel(r).label }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsRisks"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsRisks;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center p-4 text-muted" colspan="8">No se encontraron riesgos coincidentes con los filtros.</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginatorRisks [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="no-print"></mat-paginator>
+    </div>
+  </div>
+
+  <!-- TABLA 2: REPORTE DE CONTROLES -->
+  <div class="card table-card" *ngIf="activeTab === 'controls'">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><strong>Evaluación y Solidez de Controles</strong> ({{ dataSourceControls.data.length }} registros)</span>
+      <div class="action-buttons no-print">
+        <button mat-flat-button class="btn-export-excel" (click)="exportToExcel()">
+          <mat-icon>file_download</mat-icon>
+          Exportar Excel
+        </button>
+        <button mat-flat-button class="btn-print-pdf" (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourceControls" class="w-100">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Control</th>
+            <td mat-cell *matCellDef="let c">
+              <strong>{{ c.name }}</strong>
+              <small class="text-muted d-block" *ngIf="c.description">{{ c.description | slice:0:60 }}...</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="executionType">
+            <th mat-header-cell *matHeaderCellDef>Tipo Ejecución</th>
+            <td mat-cell *matCellDef="let c">{{ c.executionType || 'Manual' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="isDocument">
+            <th mat-header-cell *matHeaderCellDef>Documentado</th>
+            <td mat-cell *matCellDef="let c">{{ c.isDocument || 'No' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="hasEvidence">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Evidencia</th>
+            <td mat-cell *matCellDef="let c" class="text-center">
+              <mat-icon *ngIf="c.hasEvidence === 1" class="text-success">check_circle</mat-icon>
+              <mat-icon *ngIf="c.hasEvidence !== 1" class="text-muted">cancel</mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="solidityDesign">
+            <th mat-header-cell *matHeaderCellDef>Diseño</th>
+            <td mat-cell *matCellDef="let c">{{ c.solidityDesign || '—' }} ({{ c.percentageDesign || '0%' }})</td>
+          </ng-container>
+
+          <ng-container matColumnDef="solidityExecution">
+            <th mat-header-cell *matHeaderCellDef>Ejecución</th>
+            <td mat-cell *matCellDef="let c">{{ c.solidityExecution || '—' }} ({{ c.percentageExecution || '0%' }})</td>
+          </ng-container>
+
+          <ng-container matColumnDef="solidityResult">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Solidez Global</th>
+            <td mat-cell *matCellDef="let c" class="text-center">
+              <span class="level-badge" [style.background-color]="getControlSolidityLevel(c).color">
+                {{ getControlSolidityLevel(c).label }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="risks">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Riesgos que Mitiga</th>
+            <td mat-cell *matCellDef="let c" class="text-center">
+              {{ c.risks ? c.risks.length : 0 }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsControls"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsControls;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center p-4 text-muted" colspan="8">No se encontraron controles coincidentes.</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginatorControls [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="no-print"></mat-paginator>
+    </div>
+  </div>
+
+  <!-- TABLA 3: REPORTE DE EVENTOS DE PÉRDIDA -->
+  <div class="card table-card" *ngIf="activeTab === 'events'">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><strong>Eventos e Incidentes de Pérdida</strong> ({{ dataSourceEvents.data.length }} registros)</span>
+      <div class="action-buttons no-print">
+        <button mat-flat-button class="btn-export-excel" (click)="exportToExcel()">
+          <mat-icon>file_download</mat-icon>
+          Exportar Excel
+        </button>
+        <button mat-flat-button class="btn-print-pdf" (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourceEvents" class="w-100">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Evento / Incidente</th>
+            <td mat-cell *matCellDef="let e">
+              <strong>{{ e.name }}</strong>
+              <small class="text-muted d-block" *ngIf="e.description">{{ e.description | slice:0:60 }}...</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="whereOcurred">
+            <th mat-header-cell *matHeaderCellDef>Lugar / Área</th>
+            <td mat-cell *matCellDef="let e">{{ e.whereOcurred || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="discoveryDate">
+            <th mat-header-cell *matHeaderCellDef>Fecha Descubrimiento</th>
+            <td mat-cell *matCellDef="let e">{{ e.discoveryDate | date:'shortDate' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="criticality">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Criticidad</th>
+            <td mat-cell *matCellDef="let e" class="text-center">
+              <span class="badge-soft" [class.badge-danger]="e.criticality === 'Alta' || e.criticality === 'Muy Alta'"
+                    [class.badge-warning]="e.criticality === 'Media'"
+                    [class.badge-success]="e.criticality === 'Baja'">
+                {{ e.criticality || 'Baja' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="state">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+            <td mat-cell *matCellDef="let e" class="text-center">
+              <span class="badge-soft" [class.badge-info]="e.state === 'Identificado' || e.state === 'En análisis'"
+                    [class.badge-success]="e.state === 'Mitigado' || e.state === 'Cerrado'">
+                {{ e.state || 'Identificado' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="generateLoss">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Genera Pérdida</th>
+            <td mat-cell *matCellDef="let e" class="text-center">
+              <span *ngIf="e.generateLoss === 'Si'" class="text-danger fw-bold">Sí</span>
+              <span *ngIf="e.generateLoss !== 'Si'" class="text-muted">No</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="process">
+            <th mat-header-cell *matHeaderCellDef>Proceso Afectado</th>
+            <td mat-cell *matCellDef="let e">{{ getProcessNames(e.processes) }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsEvents"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsEvents;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center p-4 text-muted" colspan="7">No se encontraron eventos coincidentes.</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginatorEvents [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="no-print"></mat-paginator>
+    </div>
+  </div>
+
+  <!-- TABLA 4: REPORTE DE PLANES DE ACCIÓN -->
+  <div class="card table-card" *ngIf="activeTab === 'plans'">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><strong>Seguimiento de Planes de Acción</strong> ({{ dataSourcePlans.data.length }} registros)</span>
+      <div class="action-buttons no-print">
+        <button mat-flat-button class="btn-export-excel" (click)="exportToExcel()">
+          <mat-icon>file_download</mat-icon>
+          Exportar Excel
+        </button>
+        <button mat-flat-button class="btn-print-pdf" (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourcePlans" class="w-100">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Plan de Acción</th>
+            <td mat-cell *matCellDef="let p">
+              <strong>{{ p.name }}</strong>
+              <small class="text-muted d-block" *ngIf="p.description">{{ p.description | slice:0:60 }}...</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let p">{{ p.type || 'Preventivo' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="priority">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Prioridad</th>
+            <td mat-cell *matCellDef="let p" class="text-center">
+              <span class="badge-soft" [class.badge-danger]="p.priority === 'Alta'"
+                    [class.badge-warning]="p.priority === 'Medio' || p.priority === 'Media'"
+                    [class.badge-info]="p.priority === 'Baja'">
+                {{ p.priority || 'Medio' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+            <td mat-cell *matCellDef="let p" class="text-center">
+              <span class="badge-soft" [class.badge-success]="p.status === 'Completado'"
+                    [class.badge-info]="p.status === 'En progreso'"
+                    [class.badge-warning]="p.status === 'Pendiente'">
+                {{ p.status || 'Pendiente' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef style="min-width: 130px;">% Avance</th>
+            <td mat-cell *matCellDef="let p">
+              <div class="progress-cell">
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" [style.width.%]="p.progress || 0"></div>
+                </div>
+                <span class="progress-num">{{ p.progress || 0 }}%</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="budget">
+            <th mat-header-cell *matHeaderCellDef class="text-end">Presupuesto</th>
+            <td mat-cell *matCellDef="let p" class="text-end">
+              {{ p.budget ? ('$' + p.budget.toLocaleString()) : '$0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="dates">
+            <th mat-header-cell *matHeaderCellDef>Plazo (Inicio - Fin)</th>
+            <td mat-cell *matCellDef="let p">
+              {{ p.startDate | date:'shortDate' }} - {{ p.endDate | date:'shortDate' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="activities">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Tareas</th>
+            <td mat-cell *matCellDef="let p" class="text-center">
+              {{ p.activities ? p.activities.length : 0 }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsPlans"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsPlans;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center p-4 text-muted" colspan="8">No se encontraron planes coincidentes.</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginatorPlans [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="no-print"></mat-paginator>
+    </div>
+  </div>
+
+  <!-- TABLA 5: REPORTE DE PROCESOS -->
+  <div class="card table-card" *ngIf="activeTab === 'processes'">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span><strong>Cobertura de Procesos</strong> ({{ dataSourceProcesses.data.length }} registros)</span>
+      <div class="action-buttons no-print">
+        <button mat-flat-button class="btn-export-excel" (click)="exportToExcel()">
+          <mat-icon>file_download</mat-icon>
+          Exportar Excel
+        </button>
+        <button mat-flat-button class="btn-print-pdf" (click)="printReport()">
+          <mat-icon>print</mat-icon>
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourceProcesses" class="w-100">
+          <ng-container matColumnDef="code">
+            <th mat-header-cell *matHeaderCellDef>Código</th>
+            <td mat-cell *matCellDef="let pr"><strong>{{ pr.code || '—' }}</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Proceso</th>
+            <td mat-cell *matCellDef="let pr">
+              <strong>{{ pr.name }}</strong>
+              <small class="text-muted d-block" *ngIf="pr.description">{{ pr.description | slice:0:60 }}...</small>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let pr">{{ getProcessTypeName(pr.type) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let pr">{{ getProcessCategoryName(pr.category) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="risksCount">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Riesgos Asociados</th>
+            <td mat-cell *matCellDef="let pr" class="text-center">
+              {{ pr.risks ? pr.risks.length : 0 }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="responsibles">
+            <th mat-header-cell *matHeaderCellDef>Responsables</th>
+            <td mat-cell *matCellDef="let pr">
+              <span *ngIf="pr.responsibles && pr.responsibles.length > 0">{{ pr.responsibles[0].fullName }}</span>
+              <span *ngIf="!pr.responsibles || pr.responsibles.length === 0">—</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsProcesses"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsProcesses;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center p-4 text-muted" colspan="6">No se encontraron procesos coincidentes.</td>
+          </tr>
+        </table>
+      </div>
+      <mat-paginator #paginatorProcesses [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="no-print"></mat-paginator>
+    </div>
+  </div>
+</div>

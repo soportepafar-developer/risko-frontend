@@ -5,6 +5,7 @@ import { Responsibles } from "./project";
 
 export class Risk {
     id?: number;
+    code?: string;
     name: string;
     impact: number;
     impactWeight?: number;
@@ -16,6 +17,12 @@ export class Risk {
     causes?: Cause[];
     processes?: Process[];
     controls?: Control[];
+    inherentLevel?: string;
+    inherentColor?: string;
+    residualImpact?: number;
+    residualFrequency?: number;
+    residualLevel?: string;
+    residualColor?: string;
 }
 
 export class RiskForAssociate {

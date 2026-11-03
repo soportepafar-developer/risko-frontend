@@ -70,7 +70,7 @@ export class AddPlanComponent implements OnInit {
   criticality: any[] = [];
   generatedLoss: any[] = [];
 
-  // Opciones estilo Pirani
+  // Opciones del Plan
   planTypes = PlanType;
   planStates = PlanState;
   priorities = Priority;

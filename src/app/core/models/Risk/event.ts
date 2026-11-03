@@ -16,6 +16,8 @@ export class Events {
     state: string;
     criticality: string;
     generateLoss: string;
+    lossAmount?: number;
+    recoveredAmount?: number;
     responsibles?: Responsibles[];
     causes?: Cause[];
     processes?: Process[];

@@ -167,6 +167,14 @@ export const NavigationItems: NavigationItem[] = [
         url: '/map/map',
         classes: 'nav-item',
         icon: 'heat-map'
+      },
+      {
+        id: 'reports',
+        title: 'Reportes',
+        type: 'item',
+        url: '/reports/report',
+        classes: 'nav-item',
+        icon: 'bar-chart'
       }
     ]
   }

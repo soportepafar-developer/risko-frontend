@@ -38,7 +38,8 @@ import {
   ControlOutline,
   AlertOutline,
   ScheduleOutline,
-  HeatMapOutline
+  HeatMapOutline,
+  BarChartOutline
 } from '@ant-design/icons-angular/icons';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
@@ -95,7 +96,8 @@ export class NavContentComponent implements OnInit {
         ControlOutline,
         AlertOutline,
         ScheduleOutline,
-        HeatMapOutline
+        HeatMapOutline,
+  BarChartOutline
       ]
     );
     this.navigations = NavigationItems;

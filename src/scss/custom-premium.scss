@@ -13,6 +13,74 @@
   --cost-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
   --cost-shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
   --cost-shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+
+  /* Tokens de Tipografía Material M3 - Unificado a Public Sans (fuente del Dashboard) */
+  --mat-sys-body-large-font: 'Public Sans', sans-serif;
+  --mat-sys-body-medium-font: 'Public Sans', sans-serif;
+  --mat-sys-body-small-font: 'Public Sans', sans-serif;
+  --mat-sys-display-large-font: 'Public Sans', sans-serif;
+  --mat-sys-display-medium-font: 'Public Sans', sans-serif;
+  --mat-sys-display-small-font: 'Public Sans', sans-serif;
+  --mat-sys-headline-large-font: 'Public Sans', sans-serif;
+  --mat-sys-headline-medium-font: 'Public Sans', sans-serif;
+  --mat-sys-headline-small-font: 'Public Sans', sans-serif;
+  --mat-sys-label-large-font: 'Public Sans', sans-serif;
+  --mat-sys-label-medium-font: 'Public Sans', sans-serif;
+  --mat-sys-label-small-font: 'Public Sans', sans-serif;
+  --mat-sys-title-large-font: 'Public Sans', sans-serif;
+  --mat-sys-title-medium-font: 'Public Sans', sans-serif;
+  --mat-sys-title-small-font: 'Public Sans', sans-serif;
+  --mat-app-text-font: 'Public Sans', sans-serif;
+  --mdc-typography-font-family: 'Public Sans', sans-serif;
+}
+
+/* Tipografía Global: Public Sans en todos los componentes, listas y formularios */
+body,
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+.mat-mdc-table,
+.mat-table,
+.mat-mdc-header-cell,
+.mat-mdc-cell,
+.mat-header-cell,
+.mat-cell,
+.mat-mdc-form-field,
+.mat-mdc-input-element,
+.mat-mdc-floating-label,
+.mat-mdc-select,
+.mat-mdc-select-value,
+.mat-mdc-option,
+.mat-option,
+.mat-mdc-paginator,
+.mat-paginator,
+.mat-mdc-tab,
+.mat-tab-label,
+.mat-tab-link,
+.mat-mdc-dialog-container,
+.mat-mdc-autocomplete-panel,
+.mat-mdc-menu-panel,
+.mat-mdc-tooltip,
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-card,
+.mat-mdc-tab-header,
+.mdc-tab__text-label,
+.habladores,
+.table,
+.table-responsive,
+.card,
+.form-control,
+.form-select,
+.btn {
+  font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 /* Tarjetas Elevadas */
