@@ -25,6 +25,7 @@ import { GeneratedLoss } from 'src/app/shared/helpers/generated-loss';
 import { ImpactService } from 'src/app/core/services/Riesgo/impact.service';
 import { Plan } from 'src/app/core/models/Risk/plan';
 import { PlanService } from 'src/app/core/services/Riesgo/plan.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { Events } from 'src/app/core/models/Risk/event';
 import { EventService } from 'src/app/core/services/Riesgo/event.service';
 import { PlanActivity } from 'src/app/core/models/Risk/plan-activity';
@@ -128,6 +129,7 @@ export class AddPlanComponent implements OnInit {
     private userService: UserService,
     private riskService: RiskService,
     private planService: PlanService,
+    private notificationService: NotificationService,
     private impactService: ImpactService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -841,6 +843,7 @@ export class AddPlanComponent implements OnInit {
     } else {
       this.planService.update(this.id, planData);
     }
+    this.notificationService.refreshNotifications();
   }
 
   getType(type: number): string {

@@ -1,103 +1,94 @@
 <ul class="list-unstyled">
-  <!-- Commented out Github and Notifications as they are not needed
-  <li class="pc-h-item">
-    <a href="https://github.com/codedthemes/mantis-free-angular-admin-template" target="_blank"
-      class="pc-head-link me-0 bg-gray-200">
-      <i antIcon type="github" theme="outline"></i>
-    </a>
-  </li>
+  <!-- Centro de Notificaciones y Alertas Automáticas -->
   <li class="pc-h-item" ngbDropdown>
-    <a href="javascript:void(0)" class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200"
-      data-bs-toggle="dropdown" ngbDropdownToggle>
+    <a href="javascript:void(0)" class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200 position-relative"
+      data-bs-toggle="dropdown" ngbDropdownToggle title="Notificaciones de Riesgos y Procesos">
       <i antIcon type="bell" theme="outline"></i>
-      <span class="badge bg-primary pc-h-badge">3</span>
+      <span *ngIf="(unreadCount$ | async) as count" 
+            class="badge bg-danger rounded-pill position-absolute" 
+            style="top: 8px; right: 8px; font-size: 10px; padding: 2px 5px; min-width: 18px;">
+        {{ count > 9 ? '9+' : count }}
+      </span>
     </a>
-    <div class="dropdown-notification dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
-      <div class="dropdown-header d-flex align-items-center justify-content-between">
-        <h5 class="m-0">Notification</h5>
-        <a href="javascript:void(0)" class="bg-transparent"><i class="text-success d-flex f-20" antIcon theme="outline"
-            type="check-circle"></i></a>
+    <div class="dropdown-notification dropdown-menu-end pc-h-dropdown shadow-lg" 
+         style="width: 380px; max-width: 92vw; border-radius: 10px; border: 1px solid #e2e8f0;" 
+         ngbDropdownMenu>
+      <div class="dropdown-header d-flex align-items-center justify-content-between py-2 px-3 border-bottom bg-light rounded-top">
+        <div class="d-flex align-items-center">
+          <h6 class="m-0 font-weight-bold" style="color: #1e293b; font-size: 14px;">Alertas de Riesgo</h6>
+          <span *ngIf="(unreadCount$ | async) as count" class="badge bg-primary ms-2" style="font-size: 10.5px;">
+            {{ count }} nuevas
+          </span>
+        </div>
+        <div class="d-flex align-items-center">
+          <button (click)="refreshNotifications($event)" class="btn btn-sm btn-link text-decoration-none p-0 text-muted me-3" title="Reanalizar alertas del sistema">
+            <i antIcon type="sync" theme="outline"></i>
+          </button>
+          <button *ngIf="(unreadCount$ | async)" (click)="markAllNotificationsRead($event)" 
+                  class="btn btn-sm btn-link text-decoration-none p-0 text-primary" style="font-size: 12px;">
+            Marcar leídas
+          </button>
+        </div>
       </div>
-      <div class="dropdown-divider mb-0"></div>
-      <ng-scrollbar style="min-height: 280px" visibility="hover">
+
+      <ng-scrollbar style="max-height: 380px; min-height: 140px;" visibility="hover">
         <div class="dropdown-header p-0 text-wrap header-notification-scroll">
-          <div class="list-group list-group-flush w-100">
-            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <div class="user-avatar bg-light-success"><i class="d-flex" antIcon theme="outline" type="gift"></i>
+          <div class="list-group list-group-flush w-100" *ngIf="(notifications$ | async) as notifs">
+            <div *ngIf="notifs.length === 0" class="text-center py-4 text-muted">
+              <i antIcon type="bell" theme="outline" style="font-size: 28px; opacity: 0.5;"></i>
+              <p class="mt-2 mb-0" style="font-size: 13px;">No hay alertas pendientes</p>
+            </div>
+
+            <a *ngFor="let item of notifs" href="javascript:void(0)" 
+               (click)="onNotificationClick(item, $event)"
+               class="list-group-item list-group-item-action py-3 px-3 border-bottom position-relative"
+               [ngStyle]="{ 'background-color': !item.read ? '#f8fafc' : '#ffffff' }"
+               style="cursor: pointer; transition: background-color 0.2s ease;">
+              <div class="d-flex align-items-start">
+                <div class="flex-shrink-0 me-3 mt-1">
+                  <span class="d-flex align-items-center justify-content-center rounded-circle"
+                        [ngClass]="{
+                          'bg-danger text-white': item.type === 'danger',
+                          'bg-warning text-dark': item.type === 'warning',
+                          'bg-info text-white': item.type === 'info',
+                          'bg-success text-white': item.type === 'success'
+                        }"
+                        style="width: 32px; height: 32px; font-size: 16px;">
+                    <i antIcon [type]="getNotificationIconType(item.type)" theme="outline"></i>
+                  </span>
+                </div>
+                <div class="flex-grow-1" style="line-height: 1.35;">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="badge" [ngClass]="getNotificationBadgeClass(item.type)" style="font-size: 10px; font-weight: 600;">
+                      {{ item.targetRole || 'Alerta' }}
+                    </span>
+                    <small class="text-muted" style="font-size: 11px;">{{ timeAgo(item.createdAt) }}</small>
                   </div>
+                  <strong class="d-block text-dark" style="font-size: 13px; margin-bottom: 2px;">{{ item.title }}</strong>
+                  <p class="text-secondary mb-0" style="font-size: 12px; color: #475569 !important;">{{ item.message }}</p>
                 </div>
-                <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted">3:00 AM</span>
-                  <p class="text-body mb-0">
-                    It's
-                    <b>Cristina danny's</b>
-                    birthday today.
-                  </p>
-                  <span class="text-muted">2 min ago</span>
-                </div>
-              </div>
-            </a>
-            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <div class="user-avatar bg-light-primary"><i class="d-flex" antIcon theme="outline"
-                      type="message"></i></div>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted">6:00 PM</span>
-                  <p class="text-body mb-1">
-                    <b>Aida Burg</b>
-                    commented your post.
-                  </p>
-                  <span class="text-muted">5 August</span>
-                </div>
-              </div>
-            </a>
-            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <div class="user-avatar bg-light-danger"><i class="d-flex" antIcon theme="outline" type="setting"></i>
-                  </div>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted">2:45 PM</span>
-                  <p class="text-body mb-1">
-                    Your Profile is Complete &nbsp;
-                    <b>60%</b>
-                  </p>
-                  <span class="text-muted">7 hours ago</span>
-                </div>
-              </div>
-            </a>
-            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <div class="user-avatar bg-light-primary"><i class="d-flex" antIcon theme="outline" type="phone"></i>
-                  </div>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted">9:10 PM</span>
-                  <p class="text-body mb-1">
-                    <b>Cristina Danny</b>
-                    invited to join
-                    <b>Meeting.</b>
-                  </p>
-                  <span class="text-muted">Daily scrum meeting time</span>
+                <div class="d-flex align-items-center ms-2 mt-1">
+                  <span *ngIf="!item.read" class="d-inline-block rounded-circle bg-primary me-2" style="width: 8px; height: 8px;" title="No leída"></span>
+                  <button (click)="dismissNotification(item.id, $event)" class="btn btn-sm btn-link text-muted p-0" title="Descartar esta alerta" style="opacity: 0.6;">
+                    <i antIcon type="close" theme="outline" style="font-size: 11px;"></i>
+                  </button>
                 </div>
               </div>
             </a>
           </div>
         </div>
       </ng-scrollbar>
-      <div class="dropdown-divider mt-0"></div>
-      <div class="text-center py-2">
-        <a href="javascript:void(0)" class="link-primary">View all</a>
+
+      <div class="dropdown-divider my-0"></div>
+      <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-light rounded-bottom">
+        <small class="text-muted" style="font-size: 11px;">Notificaciones automáticas</small>
+        <button (click)="clearAllNotifications($event)" class="btn btn-sm btn-link text-decoration-none p-0 text-muted" style="font-size: 11.5px;">
+          Limpiar todas
+        </button>
       </div>
     </div>
   </li>
-  -->
+
   <li class="pc-h-item header-user-profile" ngbDropdown>
     <a href="javascript:void(0)" class="pc-head-link arrow-none me-0" ngbDropdownToggle>
       <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avatar me-2" />
@@ -118,34 +109,24 @@
       </div>
       <ul ngbNav #nav="ngbNav" class="drp-tabs nav-fill nav-tabs">
         <li ngbNavItem="1">
-          <a ngbNavLink>
-            <i antIcon theme="outline" type="user" class="me-2"></i>
-            Profile
-          </a>
+          <a ngbNavLink><i class="me-2" antIcon theme="outline" type="user"></i>Profile</a>
           <ng-template ngbNavContent>
-            @for (task of profile; track task) {
-            <div>
-              <a href="javascript:void(0)" class="dropdown-item">
-                <i class="text-muted" antIcon theme="outline" type="{{ task.icon }}"></i>
-                <span>{{ task.title }}</span>
+            @for (item of profile; track item) {
+              <a href="javascript:" class="dropdown-item">
+                <i class="text-muted me-2" antIcon theme="outline" [type]="item.icon"></i>
+                <span>{{ item.title }}</span>
               </a>
-            </div>
             }
           </ng-template>
         </li>
         <li ngbNavItem="2">
-          <a ngbNavLink>
-            <i class="me-2" antIcon theme="outline" type="setting"></i>
-            Setting
-          </a>
+          <a ngbNavLink><i class="me-2" antIcon theme="outline" type="setting"></i>Setting</a>
           <ng-template ngbNavContent>
-            @for (task of setting; track task) {
-            <div>
-              <a href="javascript:void(0)" class="dropdown-item">
-                <i class="text-muted" antIcon theme="outline" type="{{ task.icon }}"></i>
-                <span>{{ task.title }}</span>
+            @for (item of setting; track item) {
+              <a href="javascript:" class="dropdown-item">
+                <i class="text-muted me-2" antIcon theme="outline" [type]="item.icon"></i>
+                <span>{{ item.title }}</span>
               </a>
-            </div>
             }
           </ng-template>
         </li>

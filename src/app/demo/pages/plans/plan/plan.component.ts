@@ -98,8 +98,8 @@ export class PlanComponent implements OnInit {
     console.log(row);
     this.matDialog.open(AddActivityComponent, {
       data: { plan: row },
-      width: '90%',
-      maxWidth: '90vw',
+      width: '75%',
+      maxWidth: '75vw',
       disableClose: true,
       id: 'modal-resposible-actividad'
     });

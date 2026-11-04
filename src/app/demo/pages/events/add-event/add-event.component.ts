@@ -25,6 +25,7 @@ import { EventState } from 'src/app/shared/helpers/event-state';
 import { GeneratedLoss } from 'src/app/shared/helpers/generated-loss';
 import { Events } from 'src/app/core/models/Risk/event';
 import { EventService } from 'src/app/core/services/Riesgo/event.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { ImpactService } from 'src/app/core/services/Riesgo/impact.service';
 import { EventCategory, ReputationalImpact } from 'src/app/shared/helpers/event-category';
 
@@ -113,6 +114,7 @@ export class AddEventComponent implements OnInit {
     private userService: UserService,
     private riskService: RiskService,
     private eventService: EventService,
+    private notificationService: NotificationService,
     private impactService: ImpactService,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -769,6 +771,7 @@ export class AddEventComponent implements OnInit {
     }else{
       this.eventService.update(this.id, event);
     }
+    this.notificationService.refreshNotifications();
   }
 
   getType(type: number): string {
