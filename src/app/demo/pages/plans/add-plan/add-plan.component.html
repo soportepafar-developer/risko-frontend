@@ -10,7 +10,7 @@
 
             <div class="row padding-top-input">
               <div class="col-12">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Nombre del Plan de Acción</mat-label>
                   <input type="text" matInput formControlName="name" maxlength="250"
                     [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
@@ -23,7 +23,7 @@
 
             <div class="row">
               <div class="col-12">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Descripción y Objetivo</mat-label>
                   <textarea matInput formControlName="description" rows="3" maxlength="2000"
                     placeholder="Detalle qué se pretende lograr con la implementación de este plan..."
@@ -39,7 +39,7 @@
             <!-- Tipo de Plan, Prioridad y Estado -->
             <div class="row">
               <div class="col-4">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Tipo de Plan</mat-label>
                   <mat-select formControlName="type">
                     <mat-option *ngFor="let item of planTypes" [value]="item.value">
@@ -53,7 +53,7 @@
               </div>
 
               <div class="col-4">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Prioridad</mat-label>
                   <mat-select formControlName="priority">
                     <mat-option *ngFor="let item of priorities" [value]="item.value">
@@ -68,7 +68,7 @@
               </div>
 
               <div class="col-4">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Estado del Plan</mat-label>
                   <mat-select formControlName="status">
                     <mat-option *ngFor="let item of planStates" [value]="item.value">
@@ -86,7 +86,7 @@
             <!-- FILA: Fechas, Presupuesto y Avance -->
             <div class="row">
               <div class="col-3">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Fecha de inicio</mat-label>
                   <input formControlName="startDate" matInput [matDatepicker]="startDate" readonly [min]="minDate">
                   <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
@@ -98,7 +98,7 @@
               </div>
 
               <div class="col-3">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Fecha de finalización</mat-label>
                   <input formControlName="endDate" matInput [matDatepicker]="endDate" readonly [min]="minDate">
                   <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
@@ -110,14 +110,14 @@
               </div>
 
               <div class="col-3">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>Presupuesto Estimado ($)</mat-label>
                   <input type="number" matInput formControlName="budget" placeholder="0.00" min="0">
                 </mat-form-field>
               </div>
 
               <div class="col-3">
-                <mat-form-field appearance="outline">
+                <mat-form-field>
                   <mat-label>% Avance de Ejecución</mat-label>
                   <input type="number" matInput formControlName="progress" min="0" max="100" placeholder="0">
                   <span matSuffix>%&nbsp;</span>
@@ -133,7 +133,7 @@
 
             <div class="row padding-top-input align-items-center">
               <div class="col-6">
-                <mat-form-field appearance="outline" class="w-100">
+                <mat-form-field>
                   <mat-label>Nombre de la tarea / actividad</mat-label>
                   <input matInput [(ngModel)]="activityName" [ngModelOptions]="{standalone: true}"
                     placeholder="Ej: Implementar doble factor de autenticación...">
@@ -141,7 +141,7 @@
               </div>
 
               <div class="col-4">
-                <mat-form-field appearance="outline" class="w-100">
+                <mat-form-field>
                   <mat-label>Responsable de la tarea</mat-label>
                   <input type="text"
                     matInput

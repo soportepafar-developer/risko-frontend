@@ -26,6 +26,7 @@ import { GeneratedLoss } from 'src/app/shared/helpers/generated-loss';
 import { Events } from 'src/app/core/models/Risk/event';
 import { EventService } from 'src/app/core/services/Riesgo/event.service';
 import { ImpactService } from 'src/app/core/services/Riesgo/impact.service';
+import { EventCategory, ReputationalImpact } from 'src/app/shared/helpers/event-category';
 
 
 @Component({
@@ -64,6 +65,8 @@ export class AddEventComponent implements OnInit {
   eventState: any[] = [];
   criticality: any[] = [];
   generatedLoss: any[] = [];
+  eventCategories: any[] = [];
+  reputationalImpacts: any[] = [];
 
   minDate = new Date(2025, 0, 1);
   maxDate = new Date();
@@ -120,6 +123,8 @@ export class AddEventComponent implements OnInit {
       this.eventState = EventState;
       this.criticality = Criticality;
       this.generatedLoss = GeneratedLoss;
+      this.eventCategories = EventCategory;
+      this.reputationalImpacts = ReputationalImpact;
    }
 
   get f() { return this.form.controls; }
@@ -653,6 +658,18 @@ export class AddEventComponent implements OnInit {
         this.f.state.setValue(data.state);
         this.f.criticality.setValue(data.criticality);
         this.f.generateLoss.setValue(data.generateLoss);
+        this.f.code.setValue(data.code || '');
+        this.f.category.setValue(data.category || '');
+        this.f.endDate.setValue(data.endDate || null);
+        this.f.endTime.setValue(data.endTime || '');
+        this.f.lossAmount.setValue(data.lossAmount ?? 0);
+        this.f.recoveredAmount.setValue(data.recoveredAmount ?? 0);
+        const calcNet = Math.max(0, (Number(data.lossAmount) || 0) - (Number(data.recoveredAmount) || 0));
+        const netVal = data.netLoss !== undefined && data.netLoss !== null ? Number(data.netLoss) : calcNet;
+        this.f.netLoss.setValue(netVal.toFixed(2));
+        this.f.recoveryCosts.setValue(data.recoveryCosts ?? 0);
+        this.f.downtimeHours.setValue(data.downtimeHours ?? 0);
+        this.f.reputationalImpact.setValue(data.reputationalImpact || 'Ninguno / Mínimo');
 
         this.id = data.id;
         this.userSelect = data.responsibles;
@@ -671,7 +688,9 @@ export class AddEventComponent implements OnInit {
 
   myFormValues() {
     this.form = this.formBuilder.group({
-      name: ['',Validators.required], 
+      code: [''],
+      name: ['',Validators.required],
+      category: [''], 
       whereOcurred: ['',Validators.required], 
       description: ['',Validators.required],
       startDate: ['',Validators.required], 
@@ -681,10 +700,28 @@ export class AddEventComponent implements OnInit {
       state: ['',Validators.required],
       criticality: ['',Validators.required],
       generateLoss: ['',Validators.required],
-    })
+      endDate: [''],
+      endTime: [''],
+      lossAmount: [0],
+      recoveredAmount: [0],
+      netLoss: ['0.00'],
+      recoveryCosts: [0],
+      downtimeHours: [0],
+      reputationalImpact: ['Ninguno / Mínimo']
+    });
+
+    this.form.get('lossAmount')?.valueChanges.subscribe(() => this.calculateNetLoss());
+    this.form.get('recoveredAmount')?.valueChanges.subscribe(() => this.calculateNetLoss());
   }
 
-    onSubmit() {
+  calculateNetLoss() {
+    const gross = Number(this.form.get('lossAmount')?.value) || 0;
+    const recovered = Number(this.form.get('recoveredAmount')?.value) || 0;
+    const net = Math.max(0, gross - recovered);
+    this.form.get('netLoss')?.setValue(net.toFixed(2));
+  }
+
+  onSubmit() {
 
     this.submitted = true;
 
@@ -698,16 +735,26 @@ export class AddEventComponent implements OnInit {
     this.loading = true;
 
     const event: Events = {
+      code: this.f.code.value,
       name: this.f.name.value,
+      category: this.f.category.value,
       whereOcurred: this.f.whereOcurred.value,
       description: this.f.description.value,
       startDate: this.f.startDate.value,
       startTime: this.f.startTime.value,
       discoveryDate: this.f.discoveryDate.value,
       discoveryTime: this.f.discoveryTime.value,
+      endDate: this.f.endDate.value,
+      endTime: this.f.endTime.value,
       state: this.f.state.value,
       criticality: this.f.criticality.value,
       generateLoss: this.f.generateLoss.value,
+      lossAmount: Number(this.f.lossAmount.value) || 0,
+      recoveredAmount: Number(this.f.recoveredAmount.value) || 0,
+      netLoss: Number(this.form.get('netLoss')?.value) || 0,
+      recoveryCosts: Number(this.f.recoveryCosts.value) || 0,
+      downtimeHours: Number(this.f.downtimeHours.value) || 0,
+      reputationalImpact: this.f.reputationalImpact.value,
       responsibles: this.userSelect,
       causes: this.causeSelect,
       processes: this.processSelect,

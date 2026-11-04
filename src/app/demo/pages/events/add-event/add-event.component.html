@@ -8,38 +8,56 @@
             <div class="padding-top-input habladores">Escribe la información general de este evento.</div>
 
             <div class="row padding-top-input">
-              <div class="col-12">
-                  <mat-form-field>
-                      <mat-label>Nombre</mat-label>
-                      <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" >
-                      <mat-error *ngIf="submitted && f.name.errors">
-                          <mat-error *ngIf="f.name.errors.required">Ingrese nombre del proyecto</mat-error>
-                      </mat-error>
-                  </mat-form-field>
+              <div class="col-3">
+                <mat-form-field>
+                  <mat-label>Código del Evento</mat-label>
+                  <input type="text" matInput formControlName="code" maxlength="50" placeholder="Ej: EVT-001">
+                </mat-form-field>
+              </div>
+
+              <div class="col-9">
+                <mat-form-field>
+                  <mat-label>Nombre</mat-label>
+                  <input type="text" matInput formControlName="name" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                  <mat-error *ngIf="submitted && f.name.errors">
+                    <mat-error *ngIf="f.name.errors.required">Ingrese el nombre del evento</mat-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>Categoría de Riesgo Operacional</mat-label>
+                  <mat-select formControlName="category">
+                    <mat-option *ngFor="let item of eventCategories" [value]="item.value">
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>¿Dónde ocurrió el evento?</mat-label>
+                  <input type="text" matInput formControlName="whereOcurred" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.whereOcurred.errors }">
+                  <mat-error *ngIf="submitted && f.whereOcurred.errors">
+                    <mat-error *ngIf="f.whereOcurred.errors.required">Ingrese el lugar del evento</mat-error>
+                  </mat-error>
+                </mat-form-field>
               </div>
             </div>
 
             <div class="row">
               <div class="col-12">
-                  <mat-form-field>
-                      <mat-label>¿Dónde ocurrió el evento?</mat-label>
-                      <input type="text" matInput formControlName="whereOcurred" maxlength="250" [ngClass]="{ 'is-invalid': submitted && f.whereOcurred.errors }" >
-                      <mat-error *ngIf="submitted && f.whereOcurred.errors">
-                          <mat-error *ngIf="f.whereOcurred.errors.required">Ingrese el lugar del evento</mat-error>
-                      </mat-error>
-                  </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12">
-                  <mat-form-field>
-                      <mat-label>Descripción</mat-label>
-                      <textarea matInput formControlName="description" maxlength="2000" placeholder="2000 caracteres máximo" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
-                      <mat-error *ngIf="submitted && f.description.errors">
-                          <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del evento</mat-error>
-                      </mat-error>
-                  </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Descripción</mat-label>
+                  <textarea matInput formControlName="description" maxlength="2000" placeholder="2000 caracteres máximo" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+                  <mat-error *ngIf="submitted && f.description.errors">
+                    <mat-error *ngIf="f.description.errors.required">Ingrese la descripción del evento</mat-error>
+                  </mat-error>
+                </mat-form-field>
               </div>
             </div>
 
@@ -51,21 +69,20 @@
             <div class="row">
               <div class="col-4">
                 <mat-form-field>
-                    <mat-label>Fecha</mat-label>
-                    <input formControlName="startDate" matInput [matDatepicker]="startDate" readonly [min]="minDate" [max]="maxDate">
-                    <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-                    <mat-datepicker #startDate></mat-datepicker>
+                  <mat-label>Fecha</mat-label>
+                  <input formControlName="startDate" matInput [matDatepicker]="startDate" readonly [min]="minDate" [max]="maxDate">
+                  <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                  <mat-datepicker #startDate></mat-datepicker>
                 </mat-form-field>
               </div>
 
               <div class="col-4">
                 <mat-form-field class="compact-time">
                   <mat-label>Hora</mat-label>
-                  <input  matInput type="time" formControlName="startTime" [ngClass]="{ 'is-invalid': submitted && f.startTime.errors }">
+                  <input matInput type="time" formControlName="startTime" [ngClass]="{ 'is-invalid': submitted && f.startTime.errors }">
                 </mat-form-field>
               </div>
             </div>
-
 
             <div class="col-12 padding-top-input">
               <strong>Descubrimiento del evento</strong> <br>
@@ -75,10 +92,10 @@
             <div class="row">
               <div class="col-4">
                 <mat-form-field>
-                    <mat-label>Fecha</mat-label>
-                    <input formControlName="discoveryDate" matInput [matDatepicker]="discoveryDate" readonly [min]="minDate" [max]="maxDate">
-                    <mat-datepicker-toggle matSuffix [for]="discoveryDate"></mat-datepicker-toggle>
-                    <mat-datepicker #discoveryDate></mat-datepicker>
+                  <mat-label>Fecha</mat-label>
+                  <input formControlName="discoveryDate" matInput [matDatepicker]="discoveryDate" readonly [min]="minDate" [max]="maxDate">
+                  <mat-datepicker-toggle matSuffix [for]="discoveryDate"></mat-datepicker-toggle>
+                  <mat-datepicker #discoveryDate></mat-datepicker>
                 </mat-form-field>
               </div>
 
@@ -86,6 +103,29 @@
                 <mat-form-field class="compact-time">
                   <mat-label>Hora</mat-label>
                   <input matInput type="time" formControlName="discoveryTime" [ngClass]="{ 'is-invalid': submitted && f.discoveryTime.errors }">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="col-12 padding-top-input">
+              <strong>Cierre del evento</strong> <br>
+              Momento en el que se finalizó o resolvió el evento (opcional).
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <mat-form-field>
+                  <mat-label>Fecha</mat-label>
+                  <input formControlName="endDate" matInput [matDatepicker]="endDatePicker" readonly [min]="minDate">
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <div class="col-4">
+                <mat-form-field class="compact-time">
+                  <mat-label>Hora</mat-label>
+                  <input matInput type="time" formControlName="endTime">
                 </mat-form-field>
               </div>
             </div>
@@ -134,6 +174,75 @@
                   <mat-error *ngIf="submitted && f.generateLoss.errors">
                     <mat-error *ngIf="f.generateLoss.errors.required">Seleccione una opción</mat-error>
                   </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Cuantificación Financiera (Dinámico si f.generateLoss.value === 'Si') -->
+            <div *ngIf="f.generateLoss.value === 'Si'">
+              <div class="col-12 padding-top-input">
+                <strong>Cuantificación de Pérdidas Financieras</strong> <br>
+                Detalle de importes económicos directos, recuperados y netos.
+              </div>
+
+              <div class="row">
+                <div class="col-3">
+                  <mat-form-field>
+                    <mat-label>Pérdida Bruta</mat-label>
+                    <input type="number" step="0.01" matInput formControlName="lossAmount" min="0" placeholder="0.00" (input)="calculateNetLoss()" (change)="calculateNetLoss()">
+                    <span matPrefix class="me-1 text-muted">$</span>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-3">
+                  <mat-form-field>
+                    <mat-label>Monto Recuperado</mat-label>
+                    <input type="number" step="0.01" matInput formControlName="recoveredAmount" min="0" placeholder="0.00" (input)="calculateNetLoss()" (change)="calculateNetLoss()">
+                    <span matPrefix class="me-1 text-muted">$</span>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-3">
+                  <mat-form-field>
+                    <mat-label>Pérdida Neta (Calculada)</mat-label>
+                    <input type="text" matInput formControlName="netLoss" readonly placeholder="0.00" style="font-weight: 600;">
+                    <span matPrefix class="me-1 text-muted">$</span>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-3">
+                  <mat-form-field>
+                    <mat-label>Costos de Recuperación</mat-label>
+                    <input type="number" step="0.01" matInput formControlName="recoveryCosts" min="0" placeholder="0.00">
+                    <span matPrefix class="me-1 text-muted">$</span>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+
+            <!-- Impactos No Financieros -->
+            <div class="col-12 padding-top-input">
+              <strong>Impactos No Financieros y Operacionales</strong> <br>
+              Impacto en la reputación y tiempo de indisponibilidad.
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>Impacto Reputacional</mat-label>
+                  <mat-select formControlName="reputationalImpact">
+                    <mat-option *ngFor="let item of reputationalImpacts" [value]="item.value">
+                      {{item.label}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col-6">
+                <mat-form-field>
+                  <mat-label>Tiempo de Interrupción / Downtime</mat-label>
+                  <input type="number" matInput formControlName="downtimeHours" min="0" placeholder="0">
+                  <span matSuffix class="text-muted pe-2">horas</span>
                 </mat-form-field>
               </div>
             </div>
